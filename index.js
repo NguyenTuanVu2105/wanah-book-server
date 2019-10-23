@@ -9,11 +9,11 @@ const profile = require('./routes/api/profile');
 require('dotenv').config();
 const app = express();
 
-console.log(process.env.MONGO_URI)
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const db = require('./config/keys').mongoURI;
+console.log(require('./config/keys'))
 const config = {
     autoIndex: false,
     useNewUrlParser: true,
@@ -29,9 +29,9 @@ require('./config/passport')(passport);
 app.use('/api', users);
 app.use('/api', profile);
 
-app.use('/', (req, res) => {
-    res.send("Hello world!!");
-});
+// app.use('/', (req, res) => {
+//     res.send("Hello world!!");
+// });
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
