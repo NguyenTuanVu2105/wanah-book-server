@@ -22,4 +22,6 @@ yarn.lock
 *.log
 *.gz
 
+.env
 coverage
+.env.product
