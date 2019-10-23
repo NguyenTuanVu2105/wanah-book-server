@@ -13,5 +13,8 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "validator": "^11.1.0"
+  },
+  "engine": {
+    "node": "10.x"
   }
 }
