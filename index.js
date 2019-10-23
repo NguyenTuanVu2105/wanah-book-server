@@ -6,9 +6,10 @@ const path = require('path');
 
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
-
+require('dotenv').config();
 const app = express();
 
+console.log(process.env.MONGO_URI)
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
