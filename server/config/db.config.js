@@ -1,18 +1,20 @@
 const env = require('./env');
- 
+require('dotenv').config();
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(env.database, env.username, env.password, {
-    host: env.host,
-    dialect: env.dialect,
+// const sequelize = new Sequelize(env.database, env.username, env.password, {
+//     host: env.host,
+//     dialect: env.dialect,
  
-    pool: {
-        max: env.max,
-        min: env.pool.min,
-        acquire: env.pool.acquire,
-        idle: env.pool.idle
-    }
-});
+//     pool: {
+//         max: env.max,
+//         min: env.pool.min,
+//         acquire: env.pool.acquire,
+//         idle: env.pool.idle
+//     }
+// });
  
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+
 const db = {};
  
 db.Sequelize = Sequelize;
