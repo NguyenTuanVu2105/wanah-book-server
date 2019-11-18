@@ -14,13 +14,9 @@ db.sequelize.sync({ alter : true }).then(() => {
 	initial();
 });
 
-var server = app.listen(8080, function () {
+var port = process.env.PORT || 5000
 
-	var host = server.address().address
-	var port = server.address().port
-
-	console.log("App listening at http://%s:%s", host, port)
-})
+app.listen(port)
 
 
 function initial(){
