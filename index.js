@@ -10,8 +10,7 @@ const db = require('./server/config/db.config');
 
 const Role = db.role;
 
-db.sequelize.sync({ alter : true }).then(() => {
-	initial();
+db.sequelize.sync().then(() => {
 });
 
 var port = process.env.PORT || 5000
@@ -19,13 +18,13 @@ var port = process.env.PORT || 5000
 app.listen(port)
 
 
-function initial(){
-	Role.create({
-		id: 1,
-		name: "USER"
-	});
-	Role.create({
-		id: 2,
-		name: "ADMIN"
-	});
-}
+// function initial(){
+// 	Role.create({
+// 		id: 1,
+// 		name: "USER"
+// 	});
+// 	Role.create({
+// 		id: 2,
+// 		name: "ADMIN"
+// 	});
+// }

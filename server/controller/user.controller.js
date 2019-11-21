@@ -1,6 +1,7 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const User = db.user;
+const Profile = db.profile;
 const Role = db.role;
 
 const Op = db.Sequelize.Op;
@@ -13,7 +14,7 @@ exports.signup = (req, res) => {
 	
 	User.create({
 		email: req.body.email,
-		password: bcrypt.hashSync(req.body.password, 8)
+		password: bcrypt.hashSync(req.body.password, 8),
 	}).then(user => {
 		Role.findAll({
 		  where: {
@@ -23,6 +24,13 @@ exports.signup = (req, res) => {
 		  }
 		}).then(roles => {
 			user.setRoles(roles).then(() => {
+				const profileFields = {};
+				profileFields.userId = user.id;
+				if (req.body.first_name) profileFields.first_name = req.body.first_name;
+				if (req.body.last_name) profileFields.last_name = req.body.last_name;
+				new Profile(profileFields).save().then(profile => res.json(profile)).catch(err => console.log(err));
+					
+				
 				res.send("User registered successfully!");
             });
 		}).catch(err => {
@@ -31,6 +39,7 @@ exports.signup = (req, res) => {
 	}).catch(err => {
 		res.status(500).send("Fail! Error -> " + err);
 	})
+
 }
 
 exports.signin = (req, res) => {
