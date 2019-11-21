@@ -1,6 +1,7 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const User = db.user;
+var avatar = "./asset/default_avatar.png";
 const Profile = db.profile;
 const Role = db.role;
 
@@ -51,19 +52,26 @@ exports.signin = (req, res) => {
 		}
 	}).then(user => {
 		if (!user) {
-			return res.status(404).send('User Not Found.');
+			return res.status(404).send({"Success":"Email not exist"});
 		}
 
 		var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 		if (!passwordIsValid) {
-			return res.status(401).send({ auth: false, accessToken: null, reason: "Invalid Password!" });
+			return res.status(401).send({"Success":"password error"});
 		}
 		
 		var token = jwt.sign({ id: user.id }, config.secret, {
 		  	expiresIn: 86400 // token hết hạn sau 24 giờ
 		});
+		Profile.findOne({
+			where: {userId : user.id}
+		}).then(profile => {
+			if (profile) {
+				res.status(200).send({ Success : true, accessToken: token,id: user.id,name:profile.first_name+ " " + profile.last_name, avatar : avatar
+			});
+			}
+		})
 		
-		res.status(200).send({ auth: true, accessToken: token });
 		
 	}).catch(err => {
 		res.status(500).send('Error -> ' + err);
