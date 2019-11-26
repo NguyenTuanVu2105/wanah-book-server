@@ -28,21 +28,20 @@ verifyToken = (req, res, next) => {
 isAdmin = (req, res, next) => {
 	let token = req.headers['x-access-token'];
 	
-	User.findById(req.userId)
-		.then(user => {
-			user.getRoles().then(roles => {
-				for(let i=0; i<roles.length; i++){
-					console.log(roles[i].name);
-					if(roles[i].name.toUpperCase() === "ADMIN"){
-						next();
-						return;
-					}
-				}
+	User.findOne({
+		where: {
+			id: req.userId
+		}
+	}).then(user => {
+		console.log(user.is_Admin);
+		if(user.is_Admin === "admin") {
+			next();
+			return;
+		}
 				
-				res.status(403).send("Require Admin Role!");
-				return;
-			})
-		})
+		res.status(403).send("Require Admin Role!");
+		return;
+	});
 }
 
 const authJwt = {};
