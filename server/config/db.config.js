@@ -28,7 +28,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
  
 db.user = require('../model/user.model')(sequelize, Sequelize);
-db.role = require('../model/role.model')(sequelize, Sequelize);
 db.profile = require('..//model/profile.model')(sequelize, Sequelize);
 db.address = require('../model/address.model')(sequelize, Sequelize);
 db.book = require('../model/book.model')(sequelize, Sequelize);
@@ -38,8 +37,6 @@ db.request = require('../model/request.model')(sequelize, Sequelize);
 db.category = require('../model/category.model')(sequelize, Sequelize);
 db.book_user = require('../model/book_user.model')(sequelize, Sequelize);
  
-db.role.belongsToMany(db.user, { through: 'user_roles', foreignKey: 'roleId', otherKey: 'userId' });
-db.user.belongsToMany(db.role, { through: 'user_roles', foreignKey: 'userId', otherKey: 'roleId' });
 db.profile.belongsTo(db.user);
 db.profile.belongsTo(db.address);
 db.user.hasMany(db.review);
