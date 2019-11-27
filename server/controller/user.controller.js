@@ -3,8 +3,6 @@ const config = require('../config/config');
 const User = db.user;
 var avatar = "./asset/default_avatar.png";
 const Profile = db.profile;
-const Role = db.role;
-
 const Op = db.Sequelize.Op;
 
 var jwt = require('jsonwebtoken');
@@ -16,31 +14,18 @@ exports.signup = (req, res) => {
 	User.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(req.body.password, 8),
-	}).then(user => {
-		Role.findAll({
-		  where: {
-			name: {
-			  [Op.or]: ["user"]
-			}
-		  }
-		}).then(roles => {
-			user.setRoles(roles).then(() => {
-				const profileFields = {};
-				profileFields.userId = user.id;
-				if (req.body.first_name) profileFields.first_name = req.body.first_name;
-				if (req.body.last_name) profileFields.last_name = req.body.last_name;
-				new Profile(profileFields).save().then(profile => res.json(profile)).catch(err => console.log(err));
-					
-				
-				res.send("User registered successfully!");
-            });
-		}).catch(err => {
-			res.status(500).send("Error -> " + err);
-		});
-	}).catch(err => {
-		res.status(500).send("Fail! Error -> " + err);
+		is_Admin: false
+	}).then(
+		(user) => {
+			const profileFields = {};
+			profileFields.userId = user.id;
+			if (req.body.first_name) profileFields.first_name = req.body.first_name;
+			if (req.body.last_name) profileFields.last_name = req.body.last_name;
+			new Profile(profileFields).save().then(() => res.send({success: true})).catch(err => console.log(err));
+		}
+	).catch(err => {
+		res.status(500).send(err);
 	})
-
 }
 
 exports.signin = (req, res) => {
@@ -78,50 +63,22 @@ exports.signin = (req, res) => {
 	});
 }
 
-exports.userContent = (req, res) => {
+exports.testUser = (req, res) => {
 	User.findOne({
-		where: {id: req.userId},
-		attributes: ['email'],
-		include: [{
-			model: Role,
-			attributes: ['id'],
-			through: {
-				attributes: ['userId', 'roleId'],
-			}
-		}]
+		where: {
+			id: req.userId
+		}
 	}).then(user => {
-		res.status(200).json({
-			"description": "User Content Page",
-			"user": user
-		});
-	}).catch(err => {
-		res.status(500).json({
-			"description": "Can not access User Page",
-			"error": err
-		});
-	})
+		res.send(user);
+	}).catch(err => console.log("error" + err));
 }
 
-exports.adminBoard = (req, res) => {
+exports.testAdmin = (req, res) => {
 	User.findOne({
-		where: {id: req.userId},
-		attributes: ['email'],
-		include: [{
-			model: Role,
-			attributes: ['id'],
-			through: {
-				attributes: ['userId', 'roleId'],
-			}
-		}]
+		where: {
+			id: req.userId
+		}
 	}).then(user => {
-		res.status(200).json({
-			"description": "Admin Board",
-			"user": user
-		});
-	}).catch(err => {
-		res.status(500).json({
-			"description": "Can not access Admin Board",
-			"error": err
-		});
-	})
+		res.send(user);
+	}).catch(err => console.log("error" + err));
 }

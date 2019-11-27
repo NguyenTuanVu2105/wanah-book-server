@@ -5,18 +5,11 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true, 
             primaryKey: true
         },
-        name: {
-            type: Sequelize.STRING
+        name: { 
+            type: Sequelize.TEXT + ' CHARACTER SET utf8 NOT NULL'
         },
-        publisher: {
-            type: Sequelize.STRING
-        },
-        author: {
-            type: Sequelize.STRING
-        },
-        description: {
-            type: Sequelize.TEXT
-        },
+        publisher: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
+        description: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
         image: {
             type: Sequelize.STRING
         },
