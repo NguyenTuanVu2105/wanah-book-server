@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
 		  	type: Sequelize.STRING
 		},
 		is_Admin: {
-			type: Sequelize.STRING
+			type: Sequelize.BOOLEAN
 		} 
 	});
 	

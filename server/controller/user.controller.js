@@ -1,7 +1,7 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const User = db.user;
-
+const Profile = db.profile;
 const Op = db.Sequelize.Op;
 
 var jwt = require('jsonwebtoken');
@@ -13,11 +13,18 @@ exports.signup = (req, res) => {
 	User.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(req.body.password, 8),
-		is_Admin: "user"
+		is_Admin: false
 	}).then(
-		res.send("User Register Successfully!")
+		(user) => {
+			const profileFields = {};
+			profileFields.userId = user.id;
+			if (req.body.first_name) profileFields.first_name = req.body.first_name;
+			if (req.body.last_name) profileFields.last_name = req.body.last_name;
+			new Profile(profileFields).save().then().catch(err => console.log(err));
+			res.send({success: true});
+		}
 	).catch(err => {
-		res.status(500).send("Fail! Error -> " + err);
+		res.status(500).send(err);
 	})
 }
 

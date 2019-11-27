@@ -5,9 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true, 
             primaryKey: true
         },
-        name: {
-            type: Sequelize.STRING
-        }
+        name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci'
     });
 
     return Category;

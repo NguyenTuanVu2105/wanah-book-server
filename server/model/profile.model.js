@@ -5,15 +5,9 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true, 
             primaryKey: true
         },
-        first_name: {
-            type: Sequelize.STRING
-        },
-        last_name: {
-            type: Sequelize.STRING
-        },
-        description: {
-            type: Sequelize.TEXT
-        }
+        first_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
+        last_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
+        description: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci'
     });
     
     return Profile;
