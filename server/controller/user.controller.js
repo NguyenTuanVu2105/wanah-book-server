@@ -9,22 +9,20 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
 exports.signup = (req, res) => {
-	console.log("Processing func -> SignUp");
-	
 	User.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(req.body.password, 8),
-		is_Admin: false
-	}).then(
-		(user) => {
-			const profileFields = {};
-			profileFields.userId = user.id;
-			if (req.body.first_name) profileFields.first_name = req.body.first_name;
-			if (req.body.last_name) profileFields.last_name = req.body.last_name;
-			new Profile(profileFields).save().then(() => res.send({success: true})).catch(err => console.log(err));
-		}
-	).catch(err => {
-		res.status(500).send(err);
+	}).then(user => {
+	
+				const profileFields = {};
+				profileFields.userId = user.id;
+				if (req.body.first_name) profileFields.first_name = req.body.first_name;
+				if (req.body.last_name) profileFields.last_name = req.body.last_name;
+				new Profile(profileFields).save().then(profile => res.json(profile)).catch(err => console.log(err));
+				res.send({Success: true});
+            })
+	.catch(err => {
+		res.status(500).send("Fail! Error -> " + err);
 	})
 }
 
@@ -52,8 +50,7 @@ exports.signin = (req, res) => {
 			where: {userId : user.id}
 		}).then(profile => {
 			if (profile) {
-				res.status(200).send({ Success : true, accessToken: token,id: user.id,name:profile.first_name+ " " + profile.last_name, avatar : avatar
-			});
+				res.status(200).send({ Success : true, accessToken: token,id: user.id,name:profile.first_name+ " " + profile.last_name, avatar : avatar});
 			}
 		})
 		
