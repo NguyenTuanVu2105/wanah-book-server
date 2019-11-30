@@ -6,6 +6,7 @@ module.exports = function(app) {
 	const usercontroller = require('../controller/user.controller');
 	const profilecontroller = require('../controller/profile.controller');
 	const bookcontroller = require('../controller/book.controller')
+	const bookadmincontroller = require('../controller/bookadmin.controller')
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
 	app.post('/api/auth/signin', usercontroller.signin);
@@ -18,7 +19,15 @@ module.exports = function(app) {
 
 	app.post('/api/book/add',bookcontroller.addBook);
 
-	app.post('/api/book/edit',bookcontroller.editBook);
+	app.put('/api/book/edit',bookcontroller.editBook);
 
 	app.delete('/api/book/delete',bookcontroller.deleteBook);
+
+	app.post('/api/admin/books/add',bookadmincontroller.addBookAdmin);
+
+	app.put('/api/admin/books/edit',bookadmincontroller.editBookAdmin);
+
+	app.delete('/api/admin/books/delete',bookadmincontroller.deleteBookAdmin);
+
+	app.get('/api/admin/books/list',bookadmincontroller.pagination);
 }

@@ -1,7 +1,7 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const Book = db.book;
-exports.addBook = (req, res) => {
+exports.addBookAdmin = (req, res) => {
     console.log(req.body.name)
     const bookcase = {};
     if (req.body.name) bookcase.name = req.body.name;
@@ -22,7 +22,7 @@ exports.addBook = (req, res) => {
         else res.status(500).send({Success : false},'Error -> ' + err)
     })
 }
-exports.editBook = (req,res) =>{
+exports.editBookAdmin = (req,res) =>{
     Book.findOne({
         where:{name :req.body.name}
     }).then(book =>{
@@ -46,7 +46,7 @@ exports.editBook = (req,res) =>{
         }
     })
 }
-exports.deleteBook = (req,res) =>{
+exports.deleteBookAdmin = (req,res) =>{
     Book.destroy({
         where: {
           name: req.body.name
@@ -56,5 +56,23 @@ exports.deleteBook = (req,res) =>{
     }).catch(res.status(500).send({Success : false},'Error -> ' + err))
 }
 exports.pagination = (req, res) => {
-
+    console.log(req.query.limit)
+    var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
+    console.log(limit)
+    console.log(page)
+    Book.findAndCountAll({
+        limit: limit,
+        offset: (page-1)*limit
+        
+    }).then( result => {
+       
+      res.status(200).send({
+      success: true,
+      data: result,
+      next: '/api/admin/books/list?limit=5&page=3',
+      prev: '/api/admin/books/list?limit=5&page=3'
+    });
+    })
+      
 }
