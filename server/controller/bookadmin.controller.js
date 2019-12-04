@@ -16,18 +16,22 @@ exports.addBookAdmin = (req, res) => {
         if(!book)
         {
             new Book(bookcase).save()
-            .then(book => res.send({Success : true}))
-            .catch(err => console.log(err));
+            .then(book => res.send({success : true}))
+            .catch(err => res.status(404).send({message: err}));
         }
-        else res.status(500).send({Success : false},'Error -> ' + err)
-    })
+        else res.status(404).send({message: err})
+    }).catch(error =>
+        {
+            res.status(500).send({message: err})
+        })
+
 }
 exports.editBookAdmin = (req,res) =>{
     Book.findOne({
         where:{name :req.body.name}
     }).then(book =>{
         if(!book)
-            res.status(500).send({Success : false},'Error -> ' + err)
+            res.status(500).send({success : false},'Error -> ' + err)
         else 
         {
             Book.update({
@@ -47,13 +51,21 @@ exports.editBookAdmin = (req,res) =>{
     })
 }
 exports.deleteBookAdmin = (req,res) =>{
-    Book.destroy({
+    BookUser.destroy({
         where: {
-          name: req.body.name
+            bookId: req.body.bookId
         }
-    }).then(book =>{
-        res.send({Success: true})
-    }).catch(res.status(500).send({Success : false},'Error -> ' + err))
+    }).then(function (result) {
+        console.log(result)
+        if(result !== 0)
+        {
+            res.status(200).send({ success: true })
+        }
+        else
+        {
+            res.status(404).json({message: err})
+        }
+    })
 }
 exports.pagination = (req, res) => {
     console.log(req.query.limit)
@@ -70,8 +82,6 @@ exports.pagination = (req, res) => {
       res.status(200).send({
       success: true,
       data: result,
-      next: '/api/admin/books/list?limit=5&page=3',
-      prev: '/api/admin/books/list?limit=5&page=3'
     });
     })
       
