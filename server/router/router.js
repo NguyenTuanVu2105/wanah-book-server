@@ -4,6 +4,7 @@ const authJwt = require('./verifyJwtToken');
 module.exports = function(app) {
 
 	const usercontroller = require('../controller/user.controller');
+	const profile = require('../controller/profile.controller');
 	const bookusercontroller = require('../controller/bookuser.controller')
 	const bookadmincontroller = require('../controller/bookadmin.controller')
 	const author_categorycontroller = require('../controller/addauthor_category.controller')
@@ -11,6 +12,10 @@ module.exports = function(app) {
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
 	app.post('/api/auth/signin', usercontroller.signin);
+
+	app.post('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
+
+	app.put('/api/auth/editprofile', [authJwt.verifyToken],profile.editProfile);
 	
 	// app.get('/api/test/user', [authJwt.verifyToken], usercontroller.testUser);
 	

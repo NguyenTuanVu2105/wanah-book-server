@@ -7,7 +7,6 @@ exports.addBookAdmin = (req, res) => {
     if (req.body.name) bookcase.name = req.body.name;
     if (req.body.publisher) bookcase.publisher = req.body.publisher;
     if (req.body.description) bookcase.description = req.body.description;
-    if (req.body.author) bookcase.author = req.body.author;
     if (req.body.image) bookcase.image = req.body.image;
     if (req.body.star) bookcase.star = req.body.star;
     Book.findOne({
@@ -16,7 +15,7 @@ exports.addBookAdmin = (req, res) => {
         if(!book)
         {
             new Book(bookcase).save()
-            .then(book => res.send({success : true}))
+            .then(book => res.status(200).send({success : true}))
             .catch(err => res.status(404).send({message: err}));
         }
         else res.status(404).send({message: err})
@@ -26,30 +25,35 @@ exports.addBookAdmin = (req, res) => {
         })
 
 }
+//sửa thông tinh sách //complete
 exports.editBookAdmin = (req,res) =>{
     Book.findOne({
-        where:{name :req.body.name}
+        where:{id :req.body.id}
     }).then(book =>{
         if(!book)
-            res.status(500).send({success : false},'Error -> ' + err)
+            res.status(500).send({message : err})
         else 
         {
             Book.update({
+                name: req.body.name,
                 publisher: req.body.publisher,
                 description: req.body.description,
-                author: req.body.author,
                 image :req.body.image,
                 star : req.body.star
             },
             {
-            where:{name :req.body.name}
+            where:{id :req.body.id}
             })
             .then(
                 res.send({Success : true})
-            ).catch(err => console.log(err));
+            ).catch(error =>
+                {
+                    res.status(500).send({message: err})
+                })
         }
     })
 }
+//xóa sách admin//complete
 exports.deleteBookAdmin = (req,res) =>{
     BookUser.destroy({
         where: {
@@ -67,12 +71,12 @@ exports.deleteBookAdmin = (req,res) =>{
         }
     })
 }
+
+// phân trang
 exports.pagination = (req, res) => {
     console.log(req.query.limit)
     var limit = parseInt(req.query.limit)
     var page = parseInt(req.query.page)
-    console.log(limit)
-    console.log(page)
     Book.findAndCountAll({
         limit: limit,
         offset: (page-1)*limit
@@ -86,3 +90,30 @@ exports.pagination = (req, res) => {
     })
       
 }
+//xem thông tin sách theo sách
+exports.listBook = (req, res) => {
+    Book.findOne({
+        where: { id: item.bookId },
+        include: [
+            {   model: author_book, 
+                include:[{
+                    model: author,
+                }]
+            },
+            {   model: category_book, 
+                include:[{
+                    model: category,
+                }]
+            },
+        ]
+    }).then(books =>{
+        res.status(200).send({success : true})
+    }).catch(error =>
+        {
+            res.status(500).send({message: err})
+        })
+}
+//xem thông tin sách theo thể loại
+//xem thông tin sách theo tác giả
+
+

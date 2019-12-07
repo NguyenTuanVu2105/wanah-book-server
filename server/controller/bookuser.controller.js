@@ -56,9 +56,14 @@ exports.listBook = (req, res) => {
     }).then(books =>{
         books = books.filter(item=>item.bookId).map(item=>{
             return Book.findOne({
-                where: {
-                id: item.bookId
-                }
+                where: { id: item.bookId },
+                include: [
+                    {   model: author_book, 
+                        
+                        include:[{
+                            model: author,
+                        }]
+                    }]
             })
         })
         Promise.all(books).then(result=>{
