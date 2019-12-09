@@ -24,10 +24,11 @@ exports.addBookAdmin = (req, res) => {
                     star: req.body.star
                 }).then(book => {
                     for (var i = 0; i < authorId.length; i++) {
+                        console.log(authorId[i])
                         Author.findAll({
                             where: {
                                 id: {
-                                    [Op.or]: [authorId[i].id]
+                                    [Op.or]: [authorId[i]]
                                 }
                             }
                         }).then(auth => {
@@ -40,7 +41,7 @@ exports.addBookAdmin = (req, res) => {
                         Category.findAll({
                             where: {
                                 id: {
-                                    [Op.or]: [categoryId[i].id]
+                                    [Op.or]: [categoryId[i]]
                                 }
                             }
                         }).then(cate => {
