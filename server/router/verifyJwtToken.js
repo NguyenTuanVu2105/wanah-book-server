@@ -34,7 +34,7 @@ isAdmin = (req, res, next) => {
 		}
 	}).then(user => {
 		console.log(user.is_Admin);
-		if(user.is_Admin === "admin") {
+		if(user.is_Admin === true) {
 			next();
 			return;
 		}

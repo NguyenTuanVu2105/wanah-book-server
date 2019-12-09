@@ -1,28 +1,63 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const Book = db.book;
+const Author = db.author;
+const Category = db.category;
+const Op = db.Sequelize.Op;
+// thêm sách //complete
 exports.addBookAdmin = (req, res) => {
-    console.log(req.body.name)
-    const bookcase = {};
-    if (req.body.name) bookcase.name = req.body.name;
-    if (req.body.publisher) bookcase.publisher = req.body.publisher;
-    if (req.body.description) bookcase.description = req.body.description;
-    if (req.body.image) bookcase.image = req.body.image;
-    if (req.body.star) bookcase.star = req.body.star;
-    Book.findOne({
-        where:{name :req.body.name}
-    }).then(book =>{
-        if(!book)
-        {
-            new Book(bookcase).save()
-            .then(book => res.status(200).send({success : true}))
-            .catch(err => res.status(404).send({message: err}));
-        }
-        else res.status(404).send({message: err})
-    }).catch(error =>
-        {
-            res.status(500).send({message: err})
-        })
+    if (req.body.authorId && req.body.categoryId) {
+
+        authorId = req.body.authorId;
+        categoryId = req.body.categoryId;
+        Book.findOne({
+            where:{
+                name: req.body.name
+            }
+        }).then(book => {
+            if (!book) {
+                Book.create({
+                    name: req.body.name,
+                    publisher: req.body.publisher,
+                    description: req.body.description,
+                    image: req.body.image,
+                    star: req.body.star
+                }).then(book => {
+                    for (var i = 0; i < authorId.length; i++) {
+                        Author.findAll({
+                            where: {
+                                id: {
+                                    [Op.or]: [authorId[i].id]
+                                }
+                            }
+                        }).then(auth => {
+                            book.setAuthors(auth)
+                            .then(() => console.log("Done Join With Table Author"))
+                            .catch(err => console.log({message : err}));
+                        })
+                    }
+                    for (var i = 0; i < categoryId.length; i++) {
+                        Category.findAll({
+                            where: {
+                                id: {
+                                    [Op.or]: [categoryId[i].id]
+                                }
+                            }
+                        }).then(cate => {
+                            book.setCategories(cate)
+                            .then(() => console.log("Done Join With Table Category"))
+                            .catch(err => console.log({message : err}));
+                        })
+                    }
+
+                    res.status(200).send({Success: true});
+
+                }).catch(err => res.status(500).send({message : err}));
+            } else {
+                res.status(500).send({message : err});
+            }
+        }).catch(err => res.status(500).send({message : err}));
+    }
 
 }
 //sửa thông tinh sách //complete

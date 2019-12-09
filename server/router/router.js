@@ -23,11 +23,11 @@ module.exports = function(app) {
 
 	app.post('/api/own/book/add',[authJwt.verifyToken],bookusercontroller.addBookUser);
 
-	app.post('/api/own/book/list',[authJwt.verifyToken],bookusercontroller.listBook);
+	app.get('/api/own/book/list',[authJwt.verifyToken],bookusercontroller.listBook);
 
 	app.delete('/api/own/book/delete',[authJwt.verifyToken],bookusercontroller.deleteBookUser);
 
-	app.post('/api/admin/books/add',bookadmincontroller.addBookAdmin);
+	app.post('/api/admin/books/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/bookadmincontroller.addBookAdmin);
 
 	app.put('/api/admin/books/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/bookadmincontroller.editBookAdmin);
 

@@ -12,6 +12,7 @@ exports.signup = (req, res) => {
 	User.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(req.body.password, 8),
+		is_Admin: false
 	}).then(user => {
 	
 				const profileFields = {};
@@ -22,7 +23,7 @@ exports.signup = (req, res) => {
 				res.send({Success: true});
             })
 	.catch(err => {
-		res.status(500).send("Fail! Error -> " + err);
+		res.status(500).send({message : err});
 	})
 }
 
