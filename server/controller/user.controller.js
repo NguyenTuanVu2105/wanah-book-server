@@ -19,8 +19,7 @@ exports.signup = (req, res) => {
 				profileFields.userId = user.id;
 				if (req.body.first_name) profileFields.first_name = req.body.first_name;
 				if (req.body.last_name) profileFields.last_name = req.body.last_name;
-				new Profile(profileFields).save().then(profile => res.json(profile)).catch(err => console.log(err));
-				res.send({Success: true});
+				new Profile(profileFields).save().then(profile =>res.status(200).send({success: true})).catch(err => console.log(err));
             })
 	.catch(err => {
 		res.status(500).send({message : err});

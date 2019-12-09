@@ -7,7 +7,8 @@ module.exports = function(app) {
 	const profile = require('../controller/profile.controller');
 	const bookusercontroller = require('../controller/bookuser.controller')
 	const bookadmincontroller = require('../controller/bookadmin.controller')
-	const author_categorycontroller = require('../controller/addauthor_category.controller')
+	const authorcontroller = require('../controller/author.controller')
+	const categorycontroller = require('../controller/category.controller')
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
@@ -35,7 +36,20 @@ module.exports = function(app) {
 
 	app.get('/api/admin/books/list',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.pagination);
 
-	app.post('/api/admin/author/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/author_categorycontroller.addAuthor);
+	app.post('/api/admin/author/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.addAuthor);
+
+	app.put('/api/admin/author/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.editAuthor);
+
+	app.delete('/api/admin/author/delete',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.deleteAuthor);
+
+	//app.get('/api/admin/author/list',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.pagination);
 	
-	app.post('/api/admin/category/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/author_categorycontroller.addCategory);
+	app.post('/api/admin/category/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.addCategory);
+
+	app.put('/api/admin/category/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.editCategory);
+ 
+	app.delete('/api/admin/category/delete',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.deleteCategory);
+
+//	app.get('/api/admin/category/list',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.listCategory);
+	
 }

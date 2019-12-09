@@ -91,9 +91,9 @@ exports.editBookAdmin = (req,res) =>{
 }
 //xóa sách admin//complete
 exports.deleteBookAdmin = (req,res) =>{
-    BookUser.destroy({
+    Book.destroy({
         where: {
-            bookId: req.body.bookId
+            id: req.body.id
         }
     }).then(function (result) {
         console.log(result)

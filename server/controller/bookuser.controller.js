@@ -2,6 +2,7 @@ const db = require('../config/db.config');
 const config = require('../config/config');
 const Book = db.book;
 const BookUser= db.book_user;
+
 //thêm sách user // complete
 exports.addBookUser = (req, res) => {
     Book.findOne({
@@ -19,7 +20,7 @@ exports.addBookUser = (req, res) => {
         if(!bookId)
         {
         new BookUser(bookcase).save()
-            .then(book => res.send({success : true}))
+            .then(book => res.send({id:bookcase.bookId,success : true}))
             .catch(err => res.status(404).send({message: err}));
         }
         else res.status(404).send({message: err})
@@ -48,34 +49,34 @@ exports.deleteBookUser = (req,res) =>{
     })
 }
 exports.listBook = (req, res) => {
-    var page = parseInt(req.query.page)
-    BookUser.findAll({
-        where: {
-          userId: req.userId
-        }
-    }).then(books =>{
-        books = books.filter(item=>item.bookId).map(item=>{
-            return Book.findOne({
-                where: { id: item.bookId },
-                include: [
-                    {   model: author_book, 
+    // var page = parseInt(req.query.page)
+    // BookUser.findAll({
+    //     where: {
+    //       userId: req.userId
+    //     }
+    // }).then(books =>{
+    //     books = books.filter(item=>item.bookId).map(item=>{
+    //         return Book.findOne({
+    //             where: { id: item.bookId },
+    //             include: [
+    //                 {   model: author_book, 
                         
-                        include:[{
-                            model: author,
-                        }]
-                    }]
-            })
-        })
-        Promise.all(books).then(result=>{
-            res.send(result.map(item=>{
-                return {
-                    id :  item.id,
-                    name: item.name,
-                    star  :item.star,
-                }
-            }))
-        })
-    })
+    //                     include:[{
+    //                         model: author,
+    //                     }]
+    //                 }]
+    //         })
+    //     })
+    //     Promise.all(books).then(result=>{
+    //         res.send(result.map(item=>{
+    //             return {
+    //                 id :  item.id,
+    //                 name: item.name,
+    //                 star  :item.star,
+    //             }
+    //         }))
+    //     })
+    // })
 
 
 
@@ -91,4 +92,14 @@ exports.listBook = (req, res) => {
     //   data: result,
     // });
     // })
+    BookUser.findAll({
+        where: {
+          userId: req.userId
+        }
+    }).then(books =>{
+        db.sequelize.query("select name,star,author from book_detail")
+        .then(book => {
+            console.log(book)
+        })
+    })
 }
