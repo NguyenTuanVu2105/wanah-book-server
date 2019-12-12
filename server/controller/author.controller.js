@@ -1,6 +1,6 @@
 const db = require('../config/db.config');
 const Author = db.author;
-const Category = db.category;
+
 //thêm tác giả// complete
 exports.addAuthor = (req, res) => {
     const authors = {};

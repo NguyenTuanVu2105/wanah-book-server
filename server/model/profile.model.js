@@ -7,7 +7,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         first_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
         last_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
-        description: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci'
+        description: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
+        address_detail: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
+        address_longitude: Sequelize.INTEGER,
+        address_latitude: Sequelize.INTEGER
     });
     
     return Profile;

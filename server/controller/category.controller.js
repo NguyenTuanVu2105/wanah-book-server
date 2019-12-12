@@ -1,21 +1,21 @@
 const db = require('../config/db.config');
-const Author = db.author;
 const Category = db.category;
+
 //thêm thể loại//complete
 exports.addCategory = (req, res) => {
     const category = {};
     if (req.body.name) category.name = req.body.name;
     Category.findOne({
         where:{name :req.body.name}
-    }).then(author =>{
-        if(!author)
-        {
+    }).then(cate =>{
+        if(!cate) {
             new Category(category).save()
-            .then(category => res.send({success : true}))
+            .then(category => res.send({success : true, id: category.id}))
             .catch(err => res.status(404).send({message: err}));
+        } else {
+            res.send({success: false, message: "Category is exist"})
         }
-        else res.status(500).send({message: err})
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
 //sửa thông tinh thể loại //complete
 exports.editCategory = (req,res) =>{

@@ -1,8 +1,6 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
-const ROLES = config.ROLES; 
 const User = db.user;
-const Role = db.role;
 
 checkDuplicateEmail = (req, res, next) => {
 	User.findOne({ 

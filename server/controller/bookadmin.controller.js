@@ -11,7 +11,7 @@ exports.addBookAdmin = (req, res) => {
         authorId = req.body.authorId;
         categoryId = req.body.categoryId;
         Book.findOne({
-            where:{
+            where: {
                 name: req.body.name
             }
         }).then(book => {
@@ -28,7 +28,7 @@ exports.addBookAdmin = (req, res) => {
                         Author.findAll({
                             where: {
                                 id: {
-                                    [Op.or]: [authorId[i]]
+                                    [Op.or]: [authorId[i].id]
                                 }
                             }
                         }).then(auth => {
@@ -41,7 +41,7 @@ exports.addBookAdmin = (req, res) => {
                         Category.findAll({
                             where: {
                                 id: {
-                                    [Op.or]: [categoryId[i]]
+                                    [Op.or]: [categoryId[i].id]
                                 }
                             }
                         }).then(cate => {
