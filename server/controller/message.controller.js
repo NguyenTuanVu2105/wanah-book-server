@@ -24,7 +24,8 @@ exports.addMessage = (req, res) => {
 exports.getMessage = (req, res) => {
     Message.findAll({
         where: {
-            [Op.or]: [{from: req.userId}, {to: req.userId}]
+            [Op.or]: [{from: req.userId}, {to: req.userId}],
+            [Op.or]: [{from: req.body.id}, {to: req.body.id}]
         },
         attributes: ['content', 'message_time', 'from', 'to']
     }).then(message => {
