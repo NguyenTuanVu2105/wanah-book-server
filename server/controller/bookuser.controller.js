@@ -1,7 +1,7 @@
 const db = require('../config/db.config');
-const config = require('../config/config');
 const Book = db.book;
-const BookUser= db.book_user;
+const User = db.user;
+const Author = db.author;
 
 //thêm sách user // complete
 exports.addBookUser = (req, res) => {
@@ -49,57 +49,23 @@ exports.deleteBookUser = (req,res) =>{
     })
 }
 exports.listBook = (req, res) => {
-    // var page = parseInt(req.query.page)
-    // BookUser.findAll({
-    //     where: {
-    //       userId: req.userId
-    //     }
-    // }).then(books =>{
-    //     books = books.filter(item=>item.bookId).map(item=>{
-    //         return Book.findOne({
-    //             where: { id: item.bookId },
-    //             include: [
-    //                 {   model: author_book, 
-                        
-    //                     include:[{
-    //                         model: author,
-    //                     }]
-    //                 }]
-    //         })
-    //     })
-    //     Promise.all(books).then(result=>{
-    //         res.send(result.map(item=>{
-    //             return {
-    //                 id :  item.id,
-    //                 name: item.name,
-    //                 star  :item.star,
-    //             }
-    //         }))
-    //     })
-    // })
-
-
-
-
-    // Book.findAndCountAll({
-    //     limit: 10,
-    //     offset: (page-1)*limit
-        
-    // }).then( result => {
-       
-    //   res.status(200).send({
-    //   success: true,
-    //   data: result,
-    // });
-    // })
-    BookUser.findAll({
+    User.findOne({
         where: {
-          userId: req.userId
-        }
-    }).then(books =>{
-        db.sequelize.query("select name,star,author from book_detail")
-        .then(book => {
-            console.log(book)
-        })
-    })
+            id: req.userId
+        },
+        include: [{
+            model: Book,
+            through: {
+                attributes: ['userId', 'bookId']
+            },
+            include: [{
+                model: Author,
+                through: {
+                    attributes: ['bookid', 'authorId']
+                }
+            }]
+        }]
+    }).then(bookUser => {
+        res.status(200).send(bookUser);
+    }).catch(err => res.status(500).send({message: err}));
 }
