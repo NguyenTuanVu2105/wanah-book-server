@@ -58,17 +58,17 @@ module.exports = function(app) {
 
 	// TODO: API review and vote
 
-	app.post('/api/own/review/add', [authJwt.verifyToken], reviewcontroller.addReview);
+	app.post('/api/review/add', [authJwt.verifyToken], reviewcontroller.addReview);
 
-	app.post('/api/own/vote/add', [authJwt.verifyToken], reviewcontroller.addVote);
+	app.post('/api/vote/add', [authJwt.verifyToken], reviewcontroller.addVote);
 	
-	app.get('/api/admin/reviewgood/search', reviewcontroller.goodReview);
+	app.get('/api/reviewgood/search', reviewcontroller.goodReview);
 	
-	app.get('/api/own/review/bybook', reviewcontroller.reviewByBook);
+	app.get('/api/review/bybook', reviewcontroller.reviewByBook);
 	
-	app.get('/api/own/review/byuser', reviewcontroller.reviewByUser);
+	app.get('/api/review/byuser', reviewcontroller.reviewByUser);
 	
-	app.get('/api/own/reviews/list', bookadmincontroller.pagination);
+	app.get('/api/reviews/list', bookadmincontroller.pagination);
 	
 	// TODO: API request borrow book
 	
