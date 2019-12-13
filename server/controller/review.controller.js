@@ -18,7 +18,7 @@ exports.addReview = (req, res) => {
 exports.addVote = (req, res) => {
     Vote.create({
         userId: req.userId,
-        reviewId: req.body.review,
+        reviewId: req.body.reviewId,
         is_upvote: req.body.is_upvote
     }).then(() => {
         res.status(200).send({Success: true})
