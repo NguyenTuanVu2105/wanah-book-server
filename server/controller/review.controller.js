@@ -8,7 +8,7 @@ exports.addReview = (req, res) => {
     Review.create({
         content: req.body.content,
         star: req.body.star,
-        userId: req.body.userId,
+        userId: req.userId,
         bookId: req.body.bookId
     }).then(() => {
         res.status(200).send({Success: true});
