@@ -16,13 +16,31 @@ exports.addReview = (req, res) => {
 }
 
 exports.addVote = (req, res) => {
-    Vote.create({
+    Vote.findAll({
         userId: req.userId,
-        reviewId: req.body.reviewId,
-        is_upvote: req.body.is_upvote
-    }).then(() => {
-        res.status(200).send({Success: true})
-    }).catch(err => res.status(500).send({Success: false}));
+        reviewId: req.body.reviewId
+    }).then(vote => {
+        if (!vote) {
+            Vote.create({
+                userId: req.userId,
+                reviewId: req.body.reviewId,
+                is_upvote: req.body.is_upvote
+            }).then(() => {
+                res.status(200).send({Success: true})
+            }).catch(err => res.status(500).send({Success: false}));
+        } else {
+            Vote.update({
+                is_upvote: req.body.is_upvote
+            }, {
+                where: {
+                    userId: req.userId,
+                    reviewId: req.body.reviewId
+                }
+            }).then(() => {
+                res.status(200).send({message: "update vote is success!", success: true});
+            }).catch(err => res.status(500).send({message: err}))
+        }
+    }).catch(err => res.status(500).send({message: err}));
 }
 
 exports.goodReview = (req, res) => {
