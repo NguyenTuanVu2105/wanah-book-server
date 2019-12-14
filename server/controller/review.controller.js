@@ -16,7 +16,7 @@ exports.addReview = (req, res) => {
 }
 
 exports.addVote = (req, res) => {
-    Vote.findAll({
+    Vote.findOne({
         userId: req.userId,
         reviewId: req.body.reviewId
     }).then(vote => {
