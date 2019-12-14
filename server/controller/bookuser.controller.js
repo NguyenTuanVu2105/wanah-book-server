@@ -61,7 +61,7 @@ exports.listBook = (req, res) => {
             include: [{
                 model: Author,
                 through: {
-                    attributes: ['bookid', 'authorId']
+                    attributes: ['bookId', 'authorId']
                 }
             }]
         }]
