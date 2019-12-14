@@ -17,38 +17,21 @@ exports.editProfile = (req, res) => {
             res.status(500).send({message: err})
         })
 }
+
 exports.Profile = (req, res) => {
     Profile.findOne({
         where: {
             id : req.userId
+        }, 
+        include: {
+            model: Category,
+            through: {
+                attributes: ['profileId', 'categoryId'],
+                // where: {profileId: profile.id}
+            }
         }
     }).then( profile => {
-        if(profile) {
-            Category.findAll({
-                include: {
-                    model: Profile,
-                    through: {
-                        attributes: ['name'],
-                        where: {profileId: profile.id}
-                    }
-                }
-            }).then( category => {
-                res.status(200).send({
-                    first_name : profile.first_name,
-                    last_name  : profile.last_name,
-                    description: profile.description,
-                    address_detail: profile.address_detail,
-                    category: category.map(x => {
-                        return {
-                            id: x.id,
-                            name: x.name
-                        }
-                    })
-                 })
-            }).catch(err => {
-                res.status(500).send({message: err})
-            })
-        }
+        res.send(profile)
     }).catch(err => {
         res.status(500).send({message: err})
     })
