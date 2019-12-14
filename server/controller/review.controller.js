@@ -17,7 +17,7 @@ exports.addReview = (req, res) => {
 
 exports.addVote = (req, res) => {
     Vote.findOne({
-        userId: req.body.id,
+        userId: req.userId,
         reviewId: req.body.reviewId
     }).then(vote => {
         if (!vote) {
