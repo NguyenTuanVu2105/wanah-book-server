@@ -14,11 +14,13 @@ exports.signup = (req, res) => {
 		password: bcrypt.hashSync(req.body.password, 8),
 		is_Admin: false
 	}).then(user => {
-	
 				const profileFields = {};
 				profileFields.userId = user.id;
 				if (req.body.first_name) profileFields.first_name = req.body.first_name;
 				if (req.body.last_name) profileFields.last_name = req.body.last_name;
+				if (req.body.address) profileFields.address_detail = req.body.address;
+				if (req.body.lat) profileFields.address_latitude = req.body.lat;
+				if (req.body.lng) profileFields.address_longitude = req.body.lng;
 				new Profile(profileFields).save().then(profile =>res.status(200).send({success: true})).catch(err => console.log(err));
             })
 	.catch(err => {
