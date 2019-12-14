@@ -38,8 +38,8 @@ db.category.belongsToMany(db.book, { through: 'category_book', foreignKey: 'cate
 db.book.belongsToMany(db.category, { through: 'category_book', foreignKey: 'bookId', otherKey: 'categoryId' });
 db.author.belongsToMany(db.book, { through: 'author_book', foreignKey: 'authorId', otherKey: 'bookId' });
 db.book.belongsToMany(db.author, { through: 'author_book', foreignKey: 'bookId', otherKey: 'authorId' });
-db.user.hasMany(db.book_user);
-db.book.hasMany(db.book_user);
+db.user.belongsToMany(db.book, {through: 'book_users', foreignKey: 'userId', otherKey: 'bookId'});
+db.book.belongsToMany(db.user, {through: 'book_users', foreignKey: 'bookId', otherKey: 'userId'});
 db.book_user.hasMany(db.request);
 db.user.hasMany(db.message, {foreignKey: 'from'});
 db.user.hasMany(db.message, {foreignKey: 'to'});
