@@ -3,9 +3,10 @@ const Book = db.book;
 const User = db.user;
 const Author = db.author;
 const BookUser = db.book_user;
+const Category = db.category;
+const Review = db.review;
 //thêm sách user // complete
 exports.addBookUser = (req, res) => {
-    console.log(req.body.id)
     Book.findOne({
         where: {
             id: req.body.id
@@ -69,4 +70,29 @@ exports.listBook = (req, res) => {
     }).then(bookUser => {
         res.status(200).send(bookUser);
     }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.listBookOrderByReview = (req, res) => {
+    var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
+    Book.findAll(
+        {
+            limit: limit,
+            offset: (page-1)*limit,
+            attributes: [
+                'id', 'name', 'image', 'star',
+                [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+            ],
+            include: [
+            {
+                model: Author,
+                through: {
+                    attributes: ['bookId', 'authorId']
+                }
+            }
+        ], 
+        order: [[db.sequelize.literal('ReviewCount'), 'DESC']]
+    }).then(books => {
+        res.send(books)
+    })
 }

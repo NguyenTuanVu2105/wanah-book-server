@@ -11,14 +11,16 @@ exports.addReview = (req, res) => {
         userId: req.userId,
         bookId: req.body.bookId
     }).then(() => {
-        res.status(200).send({Success: true});
+        res.status(200).send({success: true});
     }).catch(err => res.status(500).send(err.message));
 }
 
 exports.addVote = (req, res) => {
-    Vote.findAll({
-        userId: req.userId,
-        reviewId: req.body.reviewId
+    Vote.findOne({
+        where: {
+            userId: req.userId,
+            reviewId: req.body.reviewId
+        }
     }).then(vote => {
         if (!vote) {
             Vote.create({
@@ -26,8 +28,8 @@ exports.addVote = (req, res) => {
                 reviewId: req.body.reviewId,
                 is_upvote: req.body.is_upvote
             }).then(() => {
-                res.status(200).send({Success: true})
-            }).catch(err => res.status(500).send({Success: false}));
+                res.status(200).send({success: true})
+            }).catch(err => res.status(500).send({success: false}));
         } else {
             Vote.update({
                 is_upvote: req.body.is_upvote
@@ -77,10 +79,10 @@ exports.reviewByBook = (req, res) => {
             attributes: ['id', 'content', 'star', 'bookId'],
             include: [{
                 model: Vote,
-                attributes: ['reviewId',[db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
+                attributes: ['reviewId', [db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
                 group: ['books.id']
-            }]
-        }]
+            }],
+        }],
     }).then(AllInfor => {
         res.status(200).send(AllInfor);
     }).catch(err => res.status(500).send({message: err}))
