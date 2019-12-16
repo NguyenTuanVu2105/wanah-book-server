@@ -30,6 +30,12 @@ module.exports = function(app) {
 	app.get('/api/own/book/list',[authJwt.verifyToken],bookusercontroller.listBook);
 
 	app.delete('/api/own/book/delete',[authJwt.verifyToken],bookusercontroller.deleteBookUser);
+	
+	app.get('/api/books/byreview', [authJwt.verifyToken],bookusercontroller.listBookOrderByReview)
+
+	app.get('/api/books/search', [authJwt.verifyToken],bookusercontroller.searchBook)
+
+	app.get('/api/book/info', [authJwt.verifyToken],bookusercontroller.infoBook)
 
 	app.post('/api/admin/books/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/bookadmincontroller.addBookAdmin);
 
