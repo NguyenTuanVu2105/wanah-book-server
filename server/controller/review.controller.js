@@ -13,6 +13,11 @@ exports.addReview = (req, res) => {
     }).then(() => {
         res.status(200).send({success: true});
     }).catch(err => res.status(500).send(err.message));
+
+    db.sequelize.query('CREATE TRIGGER review_trg ON reviews FOR EACH ROW' +
+    ' BEGIN' +
+    ' update books set star = 3 where id = 1;' +
+    'END;')
 }
 
 exports.addVote = (req, res) => {
@@ -102,6 +107,29 @@ exports.reviewByUser = (req, res) => {
                 model: Vote,
                 attributes: ['reviewId',[db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
                 group: ['users.id']
+            }]
+        }]
+    }).then(AllInfor => {
+        res.status(200).send(AllInfor);
+    }).catch(err => res.status(500).send({message: err}))
+}
+
+exports.getbyNewReview = (req, res) => {
+    Book.findOne({
+        where: {
+            id: req.body.bookId
+        },
+        attributes: ['id', 'name', 'publisher', 'description', 'star'],
+        include: [{
+            model: Review,
+            attributes: ['id', 'content', 'star', 'bookId'],
+            include: [{
+                model: Vote,
+                attributes: ['reviewId',[db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
+                group: ['books.id'],
+                order: [
+                    ['reviews.createdAt', "DESC"]
+                ]
             }]
         }]
     }).then(AllInfor => {

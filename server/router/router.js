@@ -75,6 +75,8 @@ module.exports = function(app) {
 	app.get('/api/review/byuser', reviewcontroller.reviewByUser);
 	
 	app.get('/api/reviews/list', bookadmincontroller.pagination);
+
+	app.get('/api/reviews/new', reviewcontroller.getbyNewReview);
 	
 	// TODO: API request borrow book
 	
