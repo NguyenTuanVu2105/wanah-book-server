@@ -96,3 +96,51 @@ exports.listBookOrderByReview = (req, res) => {
         res.send(books)
     })
 }
+
+exports.searchBook = (req, res) => {
+    var limit = parseInt(req.query.limit)
+    var q = req.query.q
+    Book.findAll(
+        {
+            limit: limit,
+            attributes: [
+                'id', 'name', 'image', 'star',
+            ],
+            where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            include: [
+                {
+                    model: Author,
+                    through: {
+                        attributes: ['bookId', 'authorId']
+                    }
+                }
+            ]
+    }).then(books => {
+        res.send(books)
+    })
+}
+exports.infoBook = (req, res) => {
+    Book.findAll(
+        {
+            // attributes: [
+            //     'id', 'name', 'image', 'star',
+            // ],
+            where: {id : req.query.bookId},
+            include: [
+                {
+                    model: Author,
+                    through: {
+                        attributes: ['bookId', 'authorId']
+                    }
+                },
+                {
+                    model: Category,
+                    through: {
+                        attributes: ['bookId', 'categoryId']
+                    }
+                }  
+            ]
+    }).then(books => {
+        res.send(books)
+    })
+}
