@@ -53,7 +53,7 @@ exports.addVote = (req, res) => {
 exports.goodReview = (req, res) => {
     Book.findOne({
         where: {
-            id: req.params.bookId
+            id: req.query.bookId
         },
         attributes: ['id', 'name', 'publisher', 'description', 'star'],
         include: [{
@@ -76,7 +76,7 @@ exports.goodReview = (req, res) => {
 exports.reviewByBook = (req, res) => {
     Book.findOne({
         where: {
-            id: req.params.id
+            id: req.query.id
         },
         attributes: ['id', 'name', 'publisher', 'description', 'star'],
         include: [{
@@ -96,7 +96,7 @@ exports.reviewByBook = (req, res) => {
 exports.reviewByUser = (req, res) => {
     User.findOne({
         where: {
-            id: req.params.id
+            id: req.query.id
         },
         attributes: ['id', 'email']
         ,
@@ -117,7 +117,7 @@ exports.reviewByUser = (req, res) => {
 exports.getbyNewReview = (req, res) => {
     Book.findOne({
         where: {
-            id: req.params.bookId
+            id: req.query.bookId
         },
         attributes: ['id', 'name', 'publisher', 'description', 'star'],
         include: [{
