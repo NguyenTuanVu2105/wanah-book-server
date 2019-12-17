@@ -8,8 +8,11 @@ module.exports = (sequelize, Sequelize) => {
         request_date: {
             type: Sequelize.DATE
         },
-        return_date: {
+        time_borrow: {
             type: Sequelize.DATE
+        },
+        return_date: {
+            type: Sequelize.INTEGER
         },
         is_accept: {
             type: Sequelize.BOOLEAN
