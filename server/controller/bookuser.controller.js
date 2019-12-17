@@ -16,7 +16,10 @@ exports.addBookUser = (req, res) => {
         bookcase.userId = req.userId;
         bookcase.bookId = books.id;
         BookUser.findOne({
-            where:{bookId : books.id}
+            where:{
+                bookId : books.id,
+                userId : req.userId
+            }
         }).then(bookId =>{
         if(!bookId)
         {
@@ -24,7 +27,7 @@ exports.addBookUser = (req, res) => {
             .then(book => res.send({id:bookcase.bookId,success : true}))
             .catch(err => res.status(404).send({message: err}));
         }
-        else res.status(404).send({message: "User owned this book"})
+        else res.status(404).send({message: "Bạn đã sở hữu sách này"})
     })
     }).catch(err =>
         {
@@ -94,7 +97,7 @@ exports.listBookOrderByReview = (req, res) => {
         order: [[db.sequelize.literal('ReviewCount'), 'DESC']]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
 
 exports.searchBook = (req, res) => {
@@ -117,10 +120,10 @@ exports.searchBook = (req, res) => {
             ]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
 exports.infoBook = (req, res) => {
-    Book.findAll(
+    Book.findOne(
         {
             // attributes: [
             //     'id', 'name', 'image', 'star',
@@ -142,5 +145,5 @@ exports.infoBook = (req, res) => {
             ]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
