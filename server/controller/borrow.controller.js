@@ -45,13 +45,13 @@ exports.convertHavedBorrow = (req, res) => {
 exports.requestBorrowBook = (req, res) => {
     Request.findOne({
         where: {
-            user_request_id: req.userId,
-            book_user_id: req.body.book_user_id
+            userId: req.userId,
+            bookUserId: req.body.book_user_id
         }
     }).then(() => {
         Request.create({
-            user_request_id: req.userId,
-            book_user_id: req.body.book_user_id,
+            userId: req.userId,
+            bookUserId: req.body.book_user_id,
             is_accept: false,
             time_borrow: req.body.time_borrow
         }).then(() => {

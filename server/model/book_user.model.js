@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true
         },
         status: {
-            type: Sequelize.STRING + ' CHARSET utf8 COLLATE utf8_general_ci'
+            type: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci'
         }
     });
 

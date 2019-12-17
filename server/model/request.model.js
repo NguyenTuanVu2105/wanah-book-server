@@ -9,10 +9,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DATE
         },
         time_borrow: {
-            type: Sequelize.DATE
+            type: Sequelize.INTEGER
         },
         return_date: {
-            type: Sequelize.INTEGER
+            type: Sequelize.DATE
         },
         is_accept: {
             type: Sequelize.BOOLEAN

@@ -11,11 +11,6 @@ exports.addReview = (req, res) => {
         userId: req.userId,
         bookId: req.body.bookId
     }).then(review => {
-        Vote.create({
-            userId: req.userId,
-            reviewId: review.id,
-            is_upvote: 0
-        })
         res.status(200).send({success: true});
     }).catch(err => res.status(500).send(err.message));
 
@@ -57,45 +52,60 @@ exports.addVote = (req, res) => {
 
 // Good review by Vote
 
-exports.goodReview = (req, res) => {
-    var arrResult = [];
+// exports.goodReview = (req, res) => {
+//     var arrResult = [];
 
-    Book.findOne({
-        where: {
-            id: req.query.bookId
-        },
-        attributes: ['id', 'name', 'publisher', 'description', 'star'],
-        include: [{
-            model: Review,
-            attributes: ['id', 'content', 'star', 'bookId'],
-            include: [{
-                model: Vote,
-                attributes: ['id', 'is_upvote', 'userId', 'reviewId']
-            }]
-        }]
-    }).then(AllInfor => {
-        for (var i = 0 ; i < AllInfor.reviews.length; i++) {
-            let data = {};
-            if (AllInfor.reviews[i].votes.length > 0) {
-                data.reviewId = AllInfor.reviews[i].id;
-                data.count = 0;
-                for (let j = 0 ; j < AllInfor.reviews[i].votes.length ; j++) {
-                    if (AllInfor.reviews[i].votes[j].is_upvote) {
-                        data.count++;
-                    }
-                }
-            } else {
-                data.reviewId = AllInfor.reviews[i].id;
-                data.count = 0;
-            }
-            arrResult.push(data);
-        }
+//     Book.findOne({
+//         where: {
+//             id: req.query.bookId
+//         },
+//         attributes: ['id', 'name', 'publisher', 'description', 'star'],
+//         include: [{
+//             model: Review,
+//             attributes: ['id', 'content', 'star', 'bookId'],
+//             include: [{
+//                 model: Vote,
+//                 attributes: ['id', 'is_upvote', 'userId', 'reviewId']
+//             }]
+//         }]
+//     }).then(AllInfor => {
+//         for (var i = 0 ; i < AllInfor.reviews.length; i++) {
+//             let data = {};
+//             if (AllInfor.reviews[i].votes.length > 0) {
+//                 data.reviewId = AllInfor.reviews[i].id;
+//                 data.count = 0;
+//                 for (let j = 0 ; j < AllInfor.reviews[i].votes.length ; j++) {
+//                     if (AllInfor.reviews[i].votes[j].is_upvote) {
+//                         data.count++;
+//                     }
+//                 }
+//             } else {
+//                 data.reviewId = AllInfor.reviews[i].id;
+//                 data.count = 0;
+//             }
+//             arrResult.push(data);
+//         }
 
-        arrResult.sort((a, b) => Number(b.count) - Number(a.count));
+//         arrResult.sort((a, b) => Number(b.count) - Number(a.count));
 
-        res.status(200).send({bookInfor: AllInfor, countInfor :arrResult});
+//         res.status(200).send({bookInfor: AllInfor, countInfor :arrResult});
             
-    }).catch(err => res.status(500).send({message: err}))
+//     }).catch(err => res.status(500).send({message: err}))
+// }
+exports.goodReview = (req, res) => {
+    limit = parseInt(req.query.limit)
+    page = parseInt(req.query.page)
+    Review.findAll(
+        {
+            limit: limit,
+            offset: (page-1)*limit,
+            attributes: [
+                'id', 'content', 'star',
+                [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount']
+            ],
+        order: [[db.sequelize.literal('VoteCount'), 'DESC']]
+    }).then(reviews => res.send(reviews))
+    .catch(err => res.status(500).send({message: err}))
 }
 
 exports.reviewByBook = (req, res) => {

@@ -41,6 +41,7 @@ db.book.belongsToMany(db.author, { through: 'author_book', foreignKey: 'bookId',
 db.user.belongsToMany(db.book, {through: 'book_users', foreignKey: 'userId', otherKey: 'bookId'});
 db.book.belongsToMany(db.user, {through: 'book_users', foreignKey: 'bookId', otherKey: 'userId'});
 db.book_user.hasMany(db.request);
+db.user.hasMany(db.request);
 db.user.hasMany(db.message, {foreignKey: 'from'});
 db.user.hasMany(db.message, {foreignKey: 'to'});
 
