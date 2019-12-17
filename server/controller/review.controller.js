@@ -55,7 +55,11 @@ exports.addVote = (req, res) => {
     }).catch(err => res.status(500).send({message: err}));
 }
 
+// Good review by Vote
+
 exports.goodReview = (req, res) => {
+    var arrResult = [];
+
     Book.findOne({
         where: {
             id: req.query.bookId
@@ -66,15 +70,31 @@ exports.goodReview = (req, res) => {
             attributes: ['id', 'content', 'star', 'bookId'],
             include: [{
                 model: Vote,
-                attributes: ['reviewId',[db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
-                group: ['books.id'],
-                order: [
-                    ['count', "DESC"]
-                ]
+                attributes: ['id', 'is_upvote', 'userId', 'reviewId']
             }]
         }]
     }).then(AllInfor => {
-        res.status(200).send(AllInfor);
+        for (var i = 0 ; i < AllInfor.reviews.length; i++) {
+            let data = {};
+            if (AllInfor.reviews[i].votes.length > 0) {
+                data.reviewId = AllInfor.reviews[i].id;
+                data.count = 0;
+                for (let j = 0 ; j < AllInfor.reviews[i].votes.length ; j++) {
+                    if (AllInfor.reviews[i].votes[j].is_upvote) {
+                        data.count++;
+                    }
+                }
+            } else {
+                data.reviewId = AllInfor.reviews[i].id;
+                data.count = 0;
+            }
+            arrResult.push(data);
+        }
+
+        arrResult.sort((a, b) => Number(b.count) - Number(a.count));
+
+        res.status(200).send({bookInfor: AllInfor, countInfor :arrResult});
+            
     }).catch(err => res.status(500).send({message: err}))
 }
 
@@ -194,9 +214,7 @@ exports.reviewByPagination = (req, res) => {
             model: Review,
             attributes: ['id', 'content', 'star', 'bookId'],
             include: [{
-                model: Vote,
-                attributes: ['reviewId',[db.sequelize.fn('COUNT', db.sequelize.col('is_upvote')), 'count']],
-                group: ['books.id']
+                model: Vote
             }]
         }] 
     }).then( result => {
