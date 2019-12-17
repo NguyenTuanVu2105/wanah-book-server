@@ -9,7 +9,8 @@ const BookUser = db.book_user;
 exports.convertHavedBorrow = (req, res) => {
     var dateNow = moment();
     var dateNumber = req.body.time_borrow;
-    var dateReturn = moment().add(7*dateNumber, 'days').calendar();
+    var dateReturn = moment().add(7*dateNumber, 'days'); // Ko chạy
+    console.log(dateReturn)
     BookUser.findOne({
         where: {
             id: req.body.book_user_id,
@@ -31,8 +32,8 @@ exports.convertHavedBorrow = (req, res) => {
                     is_exprired: false
                 }, {
                     where: {
-                        book_user_id: req.body.book_user_id,
-                        user_request_id: req.body.userId           
+                        bookUserId: req.body.book_user_id,
+                        userId: req.userId           
                     }
                 }).then(() => {
                     res.status(200).send({success: true});
@@ -62,21 +63,25 @@ exports.requestBorrowBook = (req, res) => {
 
 exports.isReturnBook = (req, res) => {
     BookUser.findOne({
-        id: req.body.book_user_id,
-        status: 'Đã Mượn'
+        where: {
+            id: req.body.book_user_id,
+            status: 'Đã Mượn'
+        }
     }).then(bookuser => {
         if (bookuser) {
             BookUser.update({
                 status: 'Đợi Mượn'
             }, {
-                id: req.body.book_user_id
+                where: {
+                    id: req.body.book_user_id
+                }
             }).then(() => {
                 Request.update({
                     is_exprired: true
                 }, {
                     where: {
-                        book_user_id: req.body.book_user_id,
-                        user_request_id: req.body.userId
+                        bookUserId: req.body.book_user_id,
+                        userId: req.body.userId
                     }
                 }).then(() => {
                     res.status(200).send({success: true});
