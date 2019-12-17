@@ -80,13 +80,11 @@ module.exports = function(app) {
 	
 	// TODO: API request borrow book
 	
-	app.get('/api/own/status/notification', [authJwt.verifyToken], borrowcontroller.notificationStatus);
-	
 	app.post('/api/own/convert/borrow', [authJwt.verifyToken], borrowcontroller.convertHavedBorrow);
 	
 	app.post('/api/own/request/borrow', [authJwt.verifyToken], borrowcontroller.requestBorrowBook);
-	
-	app.get('/api/own/notification/borrow', [authJwt.verifyToken], borrowcontroller.notificationRequestBorrow);
+
+	app.post('/api/own/convert/return', [authJwt.verifyToken], borrowcontroller.isReturnBook);
 
 	// TODO: API message
 
