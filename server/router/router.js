@@ -20,6 +20,8 @@ module.exports = function(app) {
 	app.get('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
 
 	app.put('/api/auth/editprofile', [authJwt.verifyToken],profile.editProfile);
+
+	app.get('/api/user/bybook', [authJwt.verifyToken], bookusercontroller.listUserByBook)
 	
 	// app.get('/api/test/user', [authJwt.verifyToken], usercontroller.testUser);
 	
@@ -76,7 +78,7 @@ module.exports = function(app) {
 	
 	// app.get('/api/reviews/list', bookadmincontroller.pagination);
 
-	// app.get('/api/reviews/new', reviewcontroller.getbyNewReview);
+	app.get('/api/reviews/new', reviewcontroller.getbyNewReview);
 	
 	// TODO: API request borrow book
 	
