@@ -16,12 +16,15 @@ function distance(lat1, lat2, lon1, lon2) {
     return c * r;
 }
 exports.contactUser = (req, res) => {
+    var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
     Profile.findOne({
         where: {
             id: req.userId
         }
     }).then(curUser=>{
         Profile.findAll({
+     
         }).then(users => {
             distanceArray = users.map(item => {
                 return {
@@ -30,8 +33,8 @@ exports.contactUser = (req, res) => {
                     address_detail : item.address_detail,
                     distance : distance(item.address_latitude, curUser.address_latitude, item.address_longitude, curUser.address_longitude)
                 }
-            })
-            res.send(distanceArray.sort((a, b) => (a.distance > b.distance) ? 1 : -1))
         })
-    })
+            res.send(distanceArray.sort((a, b) => (a.distance > b.distance) ? 1 : -1).slice((page-1)*limit,page*limit))
+        }).catch(err => res.status(404).send({message: err}));
+    }).catch(err => res.status(404).send({message: err}));
 }
