@@ -106,11 +106,9 @@ exports.listBookOrderByReview = (req, res) => {
 }
 
 exports.searchBook = (req, res) => {
-    var limit = parseInt(req.query.limit)
     var q = req.query.q
     Book.findAll(
         {
-            limit: limit,
             attributes: [
                 'id', 'name', 'image', 'star',
             ],
@@ -172,6 +170,11 @@ exports.listUserByBook = (req, res) => {
         }
     ]
     }).then(bookUser => {
-        res.status(200).send(bookUser);
+        res.status(200).send(bookUser.users.map(user => {
+            return {
+                id: user.id, 
+                name: user.profile.first_name + " " + user.profile.last_name,
+            }
+        }));
     }).catch(err => res.status(500).send({message: err}));
 }
