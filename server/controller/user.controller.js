@@ -60,12 +60,12 @@ exports.signin = (req, res) => {
 		}]
 	}).then(user => {
 		if (!user) {
-			return res.status(404).send({"Success":"Email not exist"});
+			return res.status(404).send({message:"Email không tồn tại"});
 		}
 
 		var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
 		if (!passwordIsValid) {
-			return res.status(401).send({"Success":"password error"});
+			return res.status(401).send({message:"Password không đúng"});
 		}
 		
 		var token = jwt.sign({ id: user.id }, config.secret, {
