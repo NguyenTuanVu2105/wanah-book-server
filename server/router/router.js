@@ -12,12 +12,15 @@ module.exports = function(app) {
 	const reviewcontroller 		= require('../controller/review.controller');
 	const borrowcontroller 		= require('../controller/borrow.controller');
 	const messagecontroller 	= require('../controller/message.controller');
+	const contactcontroller 	= require('../controller/contact.controller');
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
 	app.post('/api/auth/signin', usercontroller.signin);
 
 	app.get('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
+
+	app.get('/api/auth/contact', [authJwt.verifyToken],contactcontroller.contactUser)
 
 	app.put('/api/auth/editprofile', [authJwt.verifyToken],profile.editProfile);
 
