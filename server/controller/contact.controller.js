@@ -1,5 +1,6 @@
 const db = require('../config/db.config');
 const Profile = db.profile;
+const Op = db.Sequelize.Op;
 function distance(lat1, lat2, lon1, lon2) {
     var pi = Math.PI;
     lon1 = lon1 * (pi / 180);
@@ -24,13 +25,20 @@ exports.contactUser = (req, res) => {
         }
     }).then(curUser=>{
         Profile.findAll({
-     
+        where:{
+            id : { 
+                [Op.ne]: [curUser.id],
+              }
+        }
         }).then(users => {
             distanceArray = users.map(item => {
                 return {
                     first_name : item.first_name,
                     last_name  : item.last_name,
                     address_detail : item.address_detail,
+                    description  : item.description,
+                    avatar  : item.avatar,
+                    name :item.first_name + item.last_name,
                     distance : distance(item.address_latitude, curUser.address_latitude, item.address_longitude, curUser.address_longitude)
                 }
         })
