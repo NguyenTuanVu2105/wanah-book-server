@@ -29,9 +29,13 @@ db.message = require('../model/message.model')(sequelize, Sequelize);
  
 db.user.belongsTo(db.profile);
 db.user.hasMany(db.review);
+db.review.belongsTo(db.user);
 db.book.hasMany(db.review);
+db.review.belongsTo(db.book);
 db.user.hasMany(db.vote);
+db.vote.belongsTo(db.user);
 db.review.hasMany(db.vote);
+db.vote.belongsTo((db.review))
 db.category.belongsToMany(db.book, { through: 'category_book', foreignKey: 'categoryId', otherKey: 'bookId' });
 db.book.belongsToMany(db.category, { through: 'category_book', foreignKey: 'bookId', otherKey: 'categoryId' });
 db.author.belongsToMany(db.book, { through: 'author_book', foreignKey: 'authorId', otherKey: 'bookId' });

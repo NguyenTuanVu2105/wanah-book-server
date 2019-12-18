@@ -5,6 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true, 
             primaryKey: true
         },
+        avatar: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
         first_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
         last_name: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
         description: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci',
