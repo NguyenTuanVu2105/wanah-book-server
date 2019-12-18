@@ -5,6 +5,9 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true, 
             primaryKey: true
         },
+        status: {
+            type: Sequelize.TEXT + ' CHARSET utf8 COLLATE utf8_general_ci'
+        }
     });
 
     return BookUser;

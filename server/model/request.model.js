@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
         request_date: {
             type: Sequelize.DATE
         },
+        time_borrow: {
+            type: Sequelize.INTEGER
+        },
         return_date: {
             type: Sequelize.DATE
         },

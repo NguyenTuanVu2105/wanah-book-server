@@ -10,6 +10,7 @@
     "express": "^4.17.1",
     "geo-distance": "^0.2.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
     "mysql2": "^2.0.0",
     "nodemon": "^1.19.4",
     "regex-email": "^1.0.2",

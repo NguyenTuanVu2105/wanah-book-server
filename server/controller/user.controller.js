@@ -9,7 +9,7 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
 exports.signup = (req, res) => {
-	User.create({
+	Profile.create({
 		email: req.body.email,
 		password: bcrypt.hashSync(req.body.password, 8),
 		is_Admin: false
@@ -27,6 +27,26 @@ exports.signup = (req, res) => {
 		res.status(500).send({message : err});
 	})
 }
+exports.signup = (req, res) => {
+	Profile.create({
+		first_name: req.body.first_name,
+		last_name: req.body.last_name,
+		address_detail: req.body.address,
+		address_latitude: req.body.lat,
+		address_longitude: req.body.lng
+	}).then(profile => {
+		User.create({
+			email: req.body.email,
+			password: bcrypt.hashSync(req.body.password, 8),
+			is_Admin: false,
+			profileId: profile.id
+		})		
+		.then(user =>res.status(200).send({success: true})).catch(err => console.log(err));
+            })
+	.catch(err => {
+		res.status(500).send({message : err});
+	})
+}
 
 exports.signin = (req, res) => {
 	console.log("Sign-In");
@@ -34,7 +54,10 @@ exports.signin = (req, res) => {
 	User.findOne({
 		where: {
 			email: req.body.email
-		}
+		}, 
+		include: [{
+			model: Profile
+		}]
 	}).then(user => {
 		if (!user) {
 			return res.status(404).send({"Success":"Email not exist"});
@@ -48,14 +71,8 @@ exports.signin = (req, res) => {
 		var token = jwt.sign({ id: user.id }, config.secret, {
 		  	expiresIn: 86400 // token hết hạn sau 24 giờ
 		});
-		Profile.findOne({
-			where: {userId : user.id}
-		}).then(profile => {
-			if (profile) {
-				res.status(200).send({ Success : true, accessToken: token,id: user.id,name:profile.first_name+ " " + profile.last_name, avatar : avatar});
-			}
-		})
-		
+
+		res.send({ Success : true, accessToken: token,id: user.id,name:user.profile.first_name+ " " + user.profile.last_name, avatar : avatar})
 		
 	}).catch(err => {
 		res.status(500).send('Error -> ' + err);

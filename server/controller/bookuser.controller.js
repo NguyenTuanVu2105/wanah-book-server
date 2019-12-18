@@ -5,6 +5,7 @@ const Author = db.author;
 const BookUser = db.book_user;
 const Category = db.category;
 const Review = db.review;
+const Profile = db.profile;
 //thêm sách user // complete
 exports.addBookUser = (req, res) => {
     Book.findOne({
@@ -15,8 +16,12 @@ exports.addBookUser = (req, res) => {
         const bookcase = {};
         bookcase.userId = req.userId;
         bookcase.bookId = books.id;
+        bookcase.status = "Đợi Mượn";
         BookUser.findOne({
-            where:{bookId : books.id}
+            where:{
+                bookId : books.id,
+                userId : req.userId
+            }
         }).then(bookId =>{
         if(!bookId)
         {
@@ -24,7 +29,7 @@ exports.addBookUser = (req, res) => {
             .then(book => res.send({id:bookcase.bookId,success : true}))
             .catch(err => res.status(404).send({message: err}));
         }
-        else res.status(404).send({message: "User owned this book"})
+        else res.status(404).send({message: "Bạn đã sở hữu sách này"})
     })
     }).catch(err =>
         {
@@ -45,7 +50,7 @@ exports.deleteBookUser = (req,res) =>{
         }
         else
         {
-            res.status(404).json({message: err})
+            res.status(404).json({message: "Sách không tồn tại"})
         }
     })
 }
@@ -55,18 +60,21 @@ exports.listBook = (req, res) => {
         where: {
             id: req.userId
         },
-        include: [{
+        attributes: ['id'],
+        include: [
+            {
             model: Book,
             through: {
-                attributes: ['userId', 'bookId']
+                attributes: []
             },
             include: [{
                 model: Author,
                 through: {
-                    attributes: ['bookId', 'authorId']
+                    attributes: []
                 }
             }]
-        }]
+        }
+    ]
     }).then(bookUser => {
         res.status(200).send(bookUser);
     }).catch(err => res.status(500).send({message: err}));
@@ -87,14 +95,14 @@ exports.listBookOrderByReview = (req, res) => {
             {
                 model: Author,
                 through: {
-                    attributes: ['bookId', 'authorId']
+                    attributes: []
                 }
             }
         ], 
         order: [[db.sequelize.literal('ReviewCount'), 'DESC']]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
 
 exports.searchBook = (req, res) => {
@@ -117,10 +125,11 @@ exports.searchBook = (req, res) => {
             ]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
 }
+
 exports.infoBook = (req, res) => {
-    Book.findAll(
+    Book.findOne(
         {
             // attributes: [
             //     'id', 'name', 'image', 'star',
@@ -142,5 +151,27 @@ exports.infoBook = (req, res) => {
             ]
     }).then(books => {
         res.send(books)
-    })
+    }).catch(err => res.status(500).send({message: err}))
+}
+
+exports.listUserByBook = (req, res) => {
+    Book.findAll({
+        where: {
+            id: req.query.bookId
+        },
+        attributes: ['id'],
+        include: [
+            {
+            model: User,
+            through: {
+                attributes: ['status']
+            },
+            include: [{
+                model: Profile
+            }]
+        }
+    ]
+    }).then(bookUser => {
+        res.status(200).send(bookUser);
+    }).catch(err => res.status(500).send({message: err}));
 }

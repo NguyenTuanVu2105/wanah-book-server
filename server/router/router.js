@@ -23,6 +23,8 @@ module.exports = function(app) {
 	app.get('/api/auth/contact', [authJwt.verifyToken],contactcontroller.contactUser)
 
 	app.put('/api/auth/editprofile', [authJwt.verifyToken],profile.editProfile);
+
+	app.get('/api/user/bybook', [authJwt.verifyToken], bookusercontroller.listUserByBook)
 	
 	// app.get('/api/test/user', [authJwt.verifyToken], usercontroller.testUser);
 	
@@ -77,19 +79,17 @@ module.exports = function(app) {
 	
 	app.get('/api/review/byuser', reviewcontroller.reviewByUser);
 	
-	app.get('/api/reviews/list', bookadmincontroller.pagination);
+	// app.get('/api/reviews/list', bookadmincontroller.pagination);
 
 	app.get('/api/reviews/new', reviewcontroller.getbyNewReview);
 	
 	// TODO: API request borrow book
 	
-	app.get('/api/own/status/notification', [authJwt.verifyToken], borrowcontroller.notificationStatus);
-	
 	app.post('/api/own/convert/borrow', [authJwt.verifyToken], borrowcontroller.convertHavedBorrow);
 	
 	app.post('/api/own/request/borrow', [authJwt.verifyToken], borrowcontroller.requestBorrowBook);
-	
-	app.get('/api/own/notification/borrow', [authJwt.verifyToken], borrowcontroller.notificationRequestBorrow);
+
+	app.post('/api/own/convert/return', [authJwt.verifyToken], borrowcontroller.isReturnBook);
 
 	// TODO: API message
 
