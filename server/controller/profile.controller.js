@@ -30,7 +30,8 @@ exports.editProfile = (req, res) => {
     Profile.update({
         first_name: req.body.first_name,
         last_name:  req.body.last_name,
-        description:  req.body.description
+        description:  req.body.description,
+        avatar: req.body.avatar
     },{
     where: { id: user.profile.id }
     }).then( () =>res.status(200).send({success : true})

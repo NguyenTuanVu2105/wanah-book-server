@@ -8,7 +8,7 @@ require('./server/router/router')(app);
 
 const db = require('./server/config/db.config');
 
-db.sequelize.sync({alter: true}).then(() => {
+db.sequelize.sync().then(() => {
     console.log("Sequelize is Running");
 }).catch(err => {
     console.log(err.message);
