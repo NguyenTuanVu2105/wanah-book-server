@@ -1,5 +1,7 @@
 const verifySignUp = require('./verifySignUp');
 const authJwt = require('./verifyJwtToken');
+const multer = require('multer')
+const path = require("path")
 
 module.exports = function(app) {
 
@@ -13,12 +15,15 @@ module.exports = function(app) {
 	const borrowcontroller 		= require('../controller/borrow.controller');
 	const messagecontroller 	= require('../controller/message.controller');
 	const contactcontroller 	= require('../controller/contact.controller');
+	const imageUploader = multer({dest: 'images/'})
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
 	app.post('/api/auth/signin', usercontroller.signin);
 
 	app.get('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
+
+	app.post('/api/auth/profile/avatar', imageUploader.single('avatar'), profile.uploadAvatar)
 
 	app.get('/api/auth/contact', [authJwt.verifyToken],contactcontroller.contactUser)
 
@@ -96,4 +101,15 @@ module.exports = function(app) {
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);
 	app.get('/api/message', [authJwt.verifyToken], messagecontroller.getMessage);
 	
+	app.get('/:name', (req, res) => {
+		const fileName = req.params.name
+		console.log('fileName', fileName)
+		if (!fileName) {
+			return res.send({
+				status: false,
+				message: 'no filename specified',
+			})
+		}
+		res.sendFile(path.resolve(`./images/${fileName}`))
+	})
 }

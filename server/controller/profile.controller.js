@@ -3,20 +3,7 @@ const User = db.user;
 const Profile = db.profile;
 const Category = db.category;
 const Op = db.Sequelize.Op;
-//sửa profile //complete
-// exports.editProfile = (req, res) => {
-//     Profile.update({
-//         first_name: req.body.first_name,
-//         last_name:  req.body.last_name,
-//         description:  req.body.description
-//     },{
-//     where: { userId: req.userId }
-//     }).then( () =>res.status(200).send({success : true})
-//     ).catch(error =>
-//         {
-//             res.status(500).send({message: err})
-//         })
-// }
+const fs = require('fs')
 
 exports.editProfile = (req, res) => {
     User.findOne({
@@ -54,5 +41,19 @@ exports.Profile = (req, res) => {
         res.send(user.profile)
     }).catch(err => {
         res.status(500).send({message: err})
+    })
+}
+
+exports.uploadAvatar = (req, res) => {
+    const processedFile = req.file || {}
+    let orgName = processedFile.originalname || ''
+    orgName = orgName.trim().replace(/ /g, "-")
+    const fullPathInServ = processedFile.path;
+    const newFullPath = `${fullPathInServ}-${orgName}`
+    fs.renameSync(fullPathInServ, newFullPath);
+    res.send({
+        status: true,
+        message: 'file uploaded',
+        fileNameInServer: newFullPath
     })
 }
