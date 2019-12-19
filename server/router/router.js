@@ -23,7 +23,7 @@ module.exports = function(app) {
 
 	app.get('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
 
-	app.post('/api/auth/profile/avatar', imageUploader.single('avatar'), profile.uploadAvatar)
+	app.post('/api/auth/profile/avatar', [imageUploader.single('avatar'), authJwt.verifyToken], profile.uploadAvatar)
 
 	app.get('/api/auth/contact', [authJwt.verifyToken],contactcontroller.contactUser)
 

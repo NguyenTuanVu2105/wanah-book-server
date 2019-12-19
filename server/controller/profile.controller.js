@@ -47,12 +47,28 @@ exports.uploadAvatar = (req, res) => {
     const processedFile = req.file || {}
     let orgName = processedFile.originalname || ''
     orgName = orgName.trim().replace(/ /g, "-")
-    const fullPathInServ = processedFile.path;
+    const fullPathInServ = processedFile.path
     const newFullPath = `${fullPathInServ}-${orgName}`
     fs.renameSync(fullPathInServ, newFullPath);
-    res.send({
-        status: true,
-        message: 'file uploaded',
-        fileNameInServer: newFullPath
+    const temp = newFullPath.split('/')
+    const fileName = temp[temp.length-1]
+
+    User.findOne({
+        where: {
+            id: req.userId
+        },
+        include: [
+            {model: Profile}
+        ]
+    }).then(user => {
+    Profile.update({
+        avatar: fileName
+    },{
+    where: { id: user.profile.id }
+    }).then( () =>res.status(200).send({success : true})
+    ).catch(err =>
+        {
+            res.status(500).send({message: err})
+        })
     })
 }
