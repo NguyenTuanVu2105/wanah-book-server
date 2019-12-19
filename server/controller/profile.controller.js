@@ -43,19 +43,15 @@ exports.editProfile = (req, res) => {
 }
 
 exports.Profile = (req, res) => {
-    Profile.findOne({
+    User.findOne({
         where: {
             id : req.userId
         }, 
         include: {
-            model: Category,
-            through: {
-                attributes: ['profileId', 'categoryId'],
-                // where: {profileId: profile.id}
-            }
+            model: Profile
         }
-    }).then( profile => {
-        res.send(profile)
+    }).then( user => {
+        res.send(user.profile)
     }).catch(err => {
         res.status(500).send({message: err})
     })
