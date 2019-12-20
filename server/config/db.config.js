@@ -27,7 +27,7 @@ db.book_user = require('../model/book_user.model')(sequelize, Sequelize);
 db.author = require('../model/author.model')(sequelize, Sequelize);
 db.message = require('../model/message.model')(sequelize, Sequelize);
  
-db.user.belongsTo(db.profile);
+db.user.hasMany(db.profile);
 db.user.hasMany(db.review);
 db.review.belongsTo(db.user);
 db.book.hasMany(db.review);

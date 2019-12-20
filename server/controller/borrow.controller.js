@@ -7,10 +7,9 @@ const BookUser = db.book_user;
 //          2: `Đã Mượn`
 
 exports.convertHavedBorrow = (req, res) => {
-    var dateNow = moment();
-    var dateNumber = req.body.time_borrow;
-    var dateReturn = moment().add(7*dateNumber, 'days'); // Ko chạy
-    console.log(dateReturn)
+    var dateNow = moment().format();
+    var dateNumber = parseInt(req.body.time_borrow);
+    var dateReturn = moment().add(7*dateNumber, 'days').format();
     BookUser.findOne({
         where: {
             id: req.body.book_user_id,
