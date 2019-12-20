@@ -15,7 +15,11 @@ module.exports = function(app) {
 	const borrowcontroller 		= require('../controller/borrow.controller');
 	const messagecontroller 	= require('../controller/message.controller');
 	const contactcontroller 	= require('../controller/contact.controller');
+<<<<<<< HEAD
+	const admin 				= require('../controller/admin.controller');
+=======
 	const imageUploader = multer({dest: 'images/'})
+>>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
@@ -47,29 +51,29 @@ module.exports = function(app) {
 
 	app.get('/api/book/info', [authJwt.verifyToken],bookusercontroller.infoBook)
 
-	app.post('/api/admin/books/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/bookadmincontroller.addBookAdmin);
+	app.post('/api/admin/books/add',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.addBookAdmin);
 
-	app.put('/api/admin/books/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/bookadmincontroller.editBookAdmin);
+	app.put('/api/admin/books/edit',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.editBookAdmin);
 
 	app.delete('/api/admin/books/delete',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.deleteBookAdmin);
 
 	app.get('/api/admin/books/list',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.pagination);
 
-	app.post('/api/admin/author/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.addAuthor);
+	app.post('/api/admin/author/add',[authJwt.verifyToken, authJwt.isAdmin],authorcontroller.addAuthor);
 
-	app.put('/api/admin/author/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.editAuthor);
+	app.put('/api/admin/author/edit',[authJwt.verifyToken, authJwt.isAdmin],authorcontroller.editAuthor);
 
-	app.delete('/api/admin/author/delete',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.deleteAuthor);
+	app.delete('/api/admin/author/delete',[authJwt.verifyToken, authJwt.isAdmin],authorcontroller.deleteAuthor);
 
-	//app.get('/api/admin/author/list',/*[authJwt.verifyToken, authJwt.isAdmin],*/authorcontroller.pagination);
+	//app.get('/api/admin/author/list',[authJwt.verifyToken, authJwt.isAdmin],authorcontroller.pagination);
 	
-	app.post('/api/admin/category/add',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.addCategory);
+	app.post('/api/admin/category/add',[authJwt.verifyToken, authJwt.isAdmin],categorycontroller.addCategory);
 
-	app.put('/api/admin/category/edit',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.editCategory);
+	app.put('/api/admin/category/edit',[authJwt.verifyToken, authJwt.isAdmin],categorycontroller.editCategory);
  
-	app.delete('/api/admin/category/delete',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.deleteCategory);
+	app.delete('/api/admin/category/delete',[authJwt.verifyToken, authJwt.isAdmin],categorycontroller.deleteCategory);
 
-//	app.get('/api/admin/category/list',/*[authJwt.verifyToken, authJwt.isAdmin],*/categorycontroller.listCategory);
+//	app.get('/api/admin/category/list',[authJwt.verifyToken, authJwt.isAdmin],categorycontroller.listCategory);
 
 
 	// TODO: API review and vote
@@ -82,7 +86,11 @@ module.exports = function(app) {
 	
 	app.get('/api/review/bybook', [authJwt.verifyToken], reviewcontroller.reviewByBook);
 	
+<<<<<<< HEAD
+	app.get('/api/review/byuser', [authJwt.verifyToken], reviewcontroller.reviewByUser);
+=======
 	app.get('/api/review/byuser',[authJwt.verifyToken], reviewcontroller.reviewByUser);
+>>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 	
 	// app.get('/api/reviews/list', bookadmincontroller.pagination);
 
@@ -100,6 +108,13 @@ module.exports = function(app) {
 
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);
 	app.get('/api/message', [authJwt.verifyToken], messagecontroller.getMessage);
+
+	// TODO: API Admin
+
+	app.get('/api/user/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllUser);
+	app.get('/api/book/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllBook);
+	app.get('/api/review/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllReview);
+	app.get('/api/total/detail', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.totalInformationDetail);
 	
 	app.get('/:name', (req, res) => {
 		const fileName = req.params.name
