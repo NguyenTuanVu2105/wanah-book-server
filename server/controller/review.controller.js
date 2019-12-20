@@ -59,12 +59,15 @@ exports.goodReview = (req, res) => {
         offset: (page-1)*limit,
         attributes: [
             'id', 'content', 'star',
-            [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount']
+            [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount'],
+            [db.sequelize.literal(`(SELECT is_upvote FROM votes WHERE votes.reviewId = reviews.id AND votes.userId = ${req.userId})`), 'voted']
         ],
         include: [{
             model: User,
+            attributes: ['id'],
             include: [{
-                model: Profile
+                model: Profile,
+                attributes: ['first_name', 'last_name', 'avatar']
             }]
         },
         {
@@ -73,24 +76,7 @@ exports.goodReview = (req, res) => {
     ],
         order: [[db.sequelize.literal('VoteCount'), 'DESC']]
     }).then(reviews => {
-        res.send(reviews.map(review => {
-            return {
-                id: review.id,
-                content: review.content,
-                star: review.star,
-                voteCount: review.voteCount,
-                user: {
-                    id: review.user.id,
-                    name: review.user.profile.first_name + " " + review.user.profile.last_name,
-                    avatar: review.user.profile.avatar
-                },
-                book: {
-                    id: review.book.id,
-                    name: review.book.name,
-                    image: review.book.image
-                }
-            }
-        }))
+        res.send(reviews)
     })
     .catch(err => res.status(500).send({message: err}))
 }
@@ -109,30 +95,21 @@ exports.reviewByBook = (req, res) => {
             offset: (page-1)*limit,
             attributes: [
                 'id', 'content', 'star',
-                [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount']
+                [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount'],
+                [db.sequelize.literal(`(SELECT is_upvote FROM votes WHERE votes.reviewId = reviews.id AND votes.userId = ${req.userId})`), 'voted']
             ],
             include: [{
                 model: User,
+                attributes: ['id'],
                 include: [{
-                    model: Profile
+                    model: Profile,
+                    attributes: ['first_name', 'last_name', 'avatar']
                 }]
             }
         ],
         }]
     }).then(book => {
-        res.send(book.reviews.map(review => {
-            return {
-                id: review.id,
-                content: review.content,
-                star: review.star,
-                voteCount: review.voteCount,
-                user: {
-                    id: review.user.id,
-                    name: review.user.profile.first_name + " " + review.user.profile.last_name,
-                    avatar: review.user.profile.avatar
-                }
-            }
-        }))
+        res.send(book.reviews)
     }).catch(err => res.status(500).send({message: err}));
 }
 
@@ -150,7 +127,8 @@ exports.reviewByUser = (req, res) => {
             offset: (page-1)*limit,
             attributes: [
                 'id', 'content', 'star',
-                [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount']
+                [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount'],
+                [db.sequelize.literal(`(SELECT is_upvote FROM votes WHERE votes.reviewId = reviews.id AND votes.userId = ${req.userId})`), 'voted']
             ],
             include: [
             {
@@ -172,12 +150,15 @@ exports.getbyNewReview = (req, res) => {
         offset: (page-1)*limit,
         attributes: [
             'id', 'content', 'star', 'userId', 'bookId',
-            [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount']
+            [db.sequelize.literal('(SELECT count(if(is_upvote = 1, 1, null)) - count(if(is_upvote = 0, 1, null)) FROM votes WHERE votes.reviewId = reviews.id)'), 'VoteCount'],
+            [db.sequelize.literal(`(SELECT is_upvote FROM votes WHERE votes.reviewId = reviews.id AND votes.userId = ${req.userId})`), 'voted']
         ],
         include: [{
             model: User,
+            attributes: ['id'],
             include: [{
-                model: Profile
+                model: Profile,
+                attributes: ['first_name', 'last_name', 'avatar']
             }]
         },
         {
@@ -186,24 +167,7 @@ exports.getbyNewReview = (req, res) => {
     ],
         order: [['updatedAt', 'DESC']]
     }).then(reviews => {
-        res.send(reviews.map(review => {
-            return {
-                id: review.id,
-                content: review.content,
-                star: review.star,
-                voteCount: review.voteCount,
-                user: {
-                    id: review.user.id,
-                    name: review.user.profile.first_name + " " + review.user.profile.last_name,
-                    avatar: review.user.profile.avatar
-                },
-                book: {
-                    id: review.book.id,
-                    name: review.book.name,
-                    image: review.book.image
-                }
-            }
-        }))
+        res.send(reviews)
     })
     .catch(err => res.status(500).send({message: err}))
 }

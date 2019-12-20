@@ -1,5 +1,7 @@
 const verifySignUp = require('./verifySignUp');
 const authJwt = require('./verifyJwtToken');
+const multer = require('multer')
+const path = require("path")
 
 module.exports = function(app) {
 
@@ -13,13 +15,19 @@ module.exports = function(app) {
 	const borrowcontroller 		= require('../controller/borrow.controller');
 	const messagecontroller 	= require('../controller/message.controller');
 	const contactcontroller 	= require('../controller/contact.controller');
+<<<<<<< HEAD
 	const admin 				= require('../controller/admin.controller');
+=======
+	const imageUploader = multer({dest: 'images/'})
+>>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
 	app.post('/api/auth/signin', usercontroller.signin);
 
 	app.get('/api/auth/profile', [authJwt.verifyToken],profile.Profile);
+
+	app.post('/api/auth/profile/avatar', imageUploader.single('avatar'), profile.uploadAvatar)
 
 	app.get('/api/auth/contact', [authJwt.verifyToken],contactcontroller.contactUser)
 
@@ -78,11 +86,15 @@ module.exports = function(app) {
 	
 	app.get('/api/review/bybook', [authJwt.verifyToken], reviewcontroller.reviewByBook);
 	
+<<<<<<< HEAD
 	app.get('/api/review/byuser', [authJwt.verifyToken], reviewcontroller.reviewByUser);
+=======
+	app.get('/api/review/byuser',[authJwt.verifyToken], reviewcontroller.reviewByUser);
+>>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 	
 	// app.get('/api/reviews/list', bookadmincontroller.pagination);
 
-	app.get('/api/reviews/new', reviewcontroller.getbyNewReview);
+	app.get('/api/reviews/new', [authJwt.verifyToken], reviewcontroller.getbyNewReview);
 	
 	// TODO: API request borrow book
 	
@@ -104,4 +116,15 @@ module.exports = function(app) {
 	app.get('/api/review/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllReview);
 	app.get('/api/total/detail', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.totalInformationDetail);
 	
+	app.get('/:name', (req, res) => {
+		const fileName = req.params.name
+		console.log('fileName', fileName)
+		if (!fileName) {
+			return res.send({
+				status: false,
+				message: 'no filename specified',
+			})
+		}
+		res.sendFile(path.resolve(`./images/${fileName}`))
+	})
 }

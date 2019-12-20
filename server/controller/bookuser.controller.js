@@ -153,7 +153,7 @@ exports.infoBook = (req, res) => {
 }
 
 exports.listUserByBook = (req, res) => {
-    Book.findAll({
+    Book.findOne({
         where: {
             id: req.query.bookId
         },
@@ -161,20 +161,25 @@ exports.listUserByBook = (req, res) => {
         include: [
             {
             model: User,
+            attributes: ['id', [db.sequelize.literal(`(SELECT 111111 *
+                DEGREES(ACOS(LEAST(1.0, COS(RADIANS(21.04166030883789))
+                     * COS(RADIANS(address_latitude))
+                     * COS(RADIANS(105.78498840332031 - address_longitude))
+                     + SIN(RADIANS(21.04166030883789))
+                     * SIN(RADIANS(address_latitude))))) FROM profiles WHERE users.id = profiles.id )`), 'distance'] 
+            ],
             through: {
-                attributes: ['status']
+                attributes: [
+                    'status',
+                ]
             },
             include: [{
                 model: Profile
             }]
         }
-    ]
+    ],
+    order: [[db.sequelize.literal('`users.distance`'), 'ASC']],
     }).then(bookUser => {
-        res.status(200).send(bookUser.users.map(user => {
-            return {
-                id: user.id, 
-                name: user.profile.first_name + " " + user.profile.last_name,
-            }
-        }));
+        res.status(200).send(bookUser.users);
     }).catch(err => res.status(500).send({message: err}));
 }
