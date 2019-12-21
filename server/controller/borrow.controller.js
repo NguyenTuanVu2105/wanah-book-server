@@ -102,16 +102,20 @@ exports.requestBorrowBook = (req, res) => {
             userId: req.userId,
             bookUserId: req.body.book_user_id
         }
-    }).then(() => {
-        Request.create({
-            userId: req.userId,
-            bookUserId: req.body.book_user_id,
-            is_accept: false,
-            time_borrow: req.body.time_borrow
-        }).then(() => {
-            res.status(200).send({success: true});
-        }).catch(err => res.status(500).send({success: false, message: err}));
-    })
+    }).then(request => {
+        if (!request) {
+            Request.create({
+                userId: req.userId,
+                bookUserId: req.body.book_user_id,
+                is_accept: false,
+                time_borrow: req.body.time_borrow
+            }).then(() => {
+                res.status(200).send({success: true});
+            }).catch(err => res.status(500).send({success: false, message: err}));
+        } else {
+            res.status(200).send({success: false, message: "Bạn đã yêu cầu mượn sách này!"});
+        }
+    }).catch(err => res.status(500).send({message: err}));
 }
 
 exports.isReturnBook = (req, res) => {
