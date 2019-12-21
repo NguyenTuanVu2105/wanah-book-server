@@ -209,7 +209,7 @@ exports.getRequestDetail = (req, res) => {
             include: [
                 {
                     model: Book, 
-                    attributes: ['id', 'name', 'image'],
+                    attributes: ['id', 'name', 'image', 'star'],
                     include: [{
                         model: Author,
                         attributes: ['name']

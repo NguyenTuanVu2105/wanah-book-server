@@ -120,7 +120,8 @@ module.exports = function(app) {
 
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);
 	app.get('/api/message', [authJwt.verifyToken], messagecontroller.getMessage);
-
+	
+	app.get('/api/contacts', [authJwt.verifyToken], messagecontroller.getAllContact);
 	// TODO: API Admin
 
 	app.get('/api/user/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllUser);

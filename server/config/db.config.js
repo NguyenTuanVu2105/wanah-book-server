@@ -50,7 +50,9 @@ db.book_user.hasMany(db.request);
 db.request.belongsTo(db.book_user)
 db.user.hasMany(db.request);
 db.request.belongsTo(db.user)
-db.user.hasMany(db.message, {foreignKey: 'from'});
-db.user.hasMany(db.message, {foreignKey: 'to'});
+// db.user.hasMany(db.message, {as: 'from'});
+db.message.belongsTo(db.user, {as: 'from'})
+// db.user.hasMany(db.message,{as: 'to'});
+db.message.belongsTo(db.user, {as: 'to'})
 
 module.exports = db;
