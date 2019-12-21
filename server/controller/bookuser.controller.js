@@ -170,8 +170,13 @@ exports.listUserByBook = (req, res) => {
             ],
             through: {
                 attributes: [
-                    'status',
-                ]
+                    'id', 'status',
+                ],
+                where: {
+                    userId: {
+                        [db.Sequelize.Op.ne]: [req.userId]
+                    }
+                }
             },
             include: [{
                 model: Profile

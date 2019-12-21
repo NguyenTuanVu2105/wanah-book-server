@@ -27,7 +27,7 @@ db.book_user = require('../model/book_user.model')(sequelize, Sequelize);
 db.author = require('../model/author.model')(sequelize, Sequelize);
 db.message = require('../model/message.model')(sequelize, Sequelize);
  
-db.user.hasMany(db.profile);
+db.user.belongsTo(db.profile);
 db.user.hasMany(db.review);
 db.review.belongsTo(db.user);
 db.book.hasMany(db.review);
@@ -44,8 +44,12 @@ db.author.belongsToMany(db.book, { through: 'author_book', foreignKey: 'authorId
 db.book.belongsToMany(db.author, { through: 'author_book', foreignKey: 'bookId', otherKey: 'authorId' });
 db.user.belongsToMany(db.book, {through: 'book_users', foreignKey: 'userId', otherKey: 'bookId'});
 db.book.belongsToMany(db.user, {through: 'book_users', foreignKey: 'bookId', otherKey: 'userId'});
+db.book_user.belongsTo(db.user)
+db.book_user.belongsTo(db.book)
 db.book_user.hasMany(db.request);
+db.request.belongsTo(db.book_user)
 db.user.hasMany(db.request);
+db.request.belongsTo(db.user)
 db.user.hasMany(db.message, {foreignKey: 'from'});
 db.user.hasMany(db.message, {foreignKey: 'to'});
 

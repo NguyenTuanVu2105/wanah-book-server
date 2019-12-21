@@ -21,7 +21,7 @@ exports.editProfile = (req, res) => {
     },{
     where: { id: user.profile.id }
     }).then( () =>res.status(200).send({success : true})
-    ).catch(error =>
+    ).catch(err =>
         {
             res.status(500).send({message: err})
         })

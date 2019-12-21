@@ -15,11 +15,8 @@ module.exports = function(app) {
 	const borrowcontroller 		= require('../controller/borrow.controller');
 	const messagecontroller 	= require('../controller/message.controller');
 	const contactcontroller 	= require('../controller/contact.controller');
-<<<<<<< HEAD
 	const admin 				= require('../controller/admin.controller');
-=======
 	const imageUploader = multer({dest: 'images/'})
->>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 
 	app.post('/api/auth/signup', [verifySignUp.checkDuplicateEmail,verifySignUp.checkErrorEmail, verifySignUp.checkPassword], usercontroller.signup);
 	
@@ -35,6 +32,8 @@ module.exports = function(app) {
 
 	app.get('/api/user/bybook', [authJwt.verifyToken], bookusercontroller.listUserByBook)
 	
+	app.get('/api/user', [authJwt.verifyToken], contactcontroller.userDetail)
+
 	// app.get('/api/test/user', [authJwt.verifyToken], usercontroller.testUser);
 	
 	// app.get('/api/test/admin', [authJwt.verifyToken, authJwt.isAdmin], usercontroller.testAmin);
@@ -86,11 +85,7 @@ module.exports = function(app) {
 	
 	app.get('/api/review/bybook', [authJwt.verifyToken], reviewcontroller.reviewByBook);
 	
-<<<<<<< HEAD
 	app.get('/api/review/byuser', [authJwt.verifyToken], reviewcontroller.reviewByUser);
-=======
-	app.get('/api/review/byuser',[authJwt.verifyToken], reviewcontroller.reviewByUser);
->>>>>>> 7f1a20dfba3cd0ce4a1798ddfa61f399925e090a
 	
 	// app.get('/api/reviews/list', bookadmincontroller.pagination);
 
@@ -104,6 +99,11 @@ module.exports = function(app) {
 
 	app.post('/api/own/convert/return', [authJwt.verifyToken], borrowcontroller.isReturnBook);
 
+	app.get('/api/requests', [authJwt.verifyToken], borrowcontroller.getRequestsIncoming);
+
+	app.post('/api/request/accept', [authJwt.verifyToken], borrowcontroller.acceptRequest);
+
+	app.post('/api/request/deny', [authJwt.verifyToken], borrowcontroller.denyRequest);
 	// TODO: API message
 
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);
@@ -118,7 +118,6 @@ module.exports = function(app) {
 	
 	app.get('/:name', (req, res) => {
 		const fileName = req.params.name
-		console.log('fileName', fileName)
 		if (!fileName) {
 			return res.send({
 				status: false,

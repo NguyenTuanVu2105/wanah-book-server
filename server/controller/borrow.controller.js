@@ -2,9 +2,14 @@ const db = require('../config/db.config');
 const moment = require('moment');
 const Request = db.request;
 const BookUser = db.book_user;
-
+const Book = db.book;
+const User = db.user;
+const Profile = db.profile;
+const Author = db.author;
+const Op = db.Sequelize.Op;
 // STATUS:  1: `Đợi Mượn`  
 //          2: `Đã Mượn`
+//          3: `Liên lạc`
 
 exports.convertHavedBorrow = (req, res) => {
     var dateNow = moment().format();
@@ -13,7 +18,6 @@ exports.convertHavedBorrow = (req, res) => {
     BookUser.findOne({
         where: {
             id: req.body.book_user_id,
-            status: 'Đợi Mượn'
         }
     }).then(bookuser => {
         if (bookuser) {
@@ -38,6 +42,56 @@ exports.convertHavedBorrow = (req, res) => {
                     res.status(200).send({success: true});
                 }).catch(err => res.status(500).send({success: false, message: err}));
             }).catch(err => res.status(500).send({success: false, message: err}));
+        }
+    }).catch(err => res.status(500).send({success: false,message: err}))
+}
+
+exports.acceptRequest = (req, res) => {
+    Request.findOne({
+        where: {
+            id: req.body.request_id,
+        }
+    }).then(request => {
+        if (request) {
+            BookUser.update({
+                status: 'Liên lạc'
+            }, {
+                where: {
+                    id: request.bookUserId
+                }
+            }).then(() => {
+                Request.update({
+                    is_accept: true
+                }, {
+                    where: {
+                        id: request.id
+                    }
+                })
+                .then(() => res.status(200).send({success: true}))
+                .catch(err => res.status(500).send({success: false, message: err}))
+            }).catch(err => res.status(500).send({success: false, message: err}));
+        } else {
+            res.status(404).send({message: 'Not found'})
+        }
+    }).catch(err => res.status(500).send({success: false,message: err}))
+}
+
+exports.denyRequest = (req, res) => {
+    Request.findOne({
+        where: {
+            id: req.body.request_id,
+        }
+    }).then(request => {
+        if (request) {
+            Request.destroy({
+                where: {
+                    id: request.id,
+                }
+            }).then(() => {
+                res.status(200).send({success: true});
+            }).catch(err => res.status(500).send({success: false, message: err}));
+        } else {
+            res.status(404).send({message: 'Not found'})
         }
     }).catch(err => res.status(500).send({success: false,message: err}))
 }
@@ -88,4 +142,49 @@ exports.isReturnBook = (req, res) => {
             }).catch(err => res.status(500).send({success: false, message: err}));
         }
     }).catch(err => res.status(500).send({success: false, message: err}));
+}
+
+exports.getRequestsIncoming = (req, res) => {
+    var userId = req.userId
+    Request.findAll({
+        where: {
+            [Op.or]: [
+                {userId: userId},
+                db.sequelize.literal(`book_user.userId = ${userId}`)
+            ]
+        },
+        include: [{
+            model: BookUser, 
+            attributes: ['id', 'status'],
+            include: [
+                {
+                    model: Book, 
+                    attributes: ['id', 'name', 'image'],
+                    include: [{
+                        model: Author,
+                        attributes: ['name']
+                    }]
+                },
+                {
+                    model: User,
+                    attributes: ['id'],
+                    include: [{
+                        model: Profile,
+                        attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
+                    }]
+                }
+            ]
+        },
+        {
+            model: User,
+            attributes: ['id'],
+            include: [{
+                model: Profile,
+                attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
+            }]
+        } 
+    ] 
+    }
+    ).then(result => res.send(result))
+    .catch(err => res.status(500).send({message: err}))
 }
