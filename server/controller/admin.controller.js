@@ -1,18 +1,17 @@
 const db = require('../config/db.config');
 const User = db.user;
 const Profile = db.profile;
-const Category = db.category;
 const Book = db.book;
 const Review = db.review;
 
 exports.viewAllUser = (req, res) => {
     limit = parseInt(req.query.limit);
     page = parseInt(req.query.page);
-    Profile.findAll({
+    User.findAll({
         limit: limit,
         offset: (page-1)*limit,
         include: [{
-            model: Category
+            model: Profile
         }]
     }).then(data => {
         res.status(200).send(data);
