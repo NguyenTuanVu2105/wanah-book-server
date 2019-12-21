@@ -1,6 +1,6 @@
 const db = require('../config/db.config');
 const Author = db.author;
-
+const Book = db.book
 //thêm tác giả// complete
 exports.addAuthor = (req, res) => {
     const authors = {};
@@ -58,4 +58,23 @@ exports.deleteAuthor = (req,res) =>{
             res.status(404).json({message: err})
         }
     })
+}
+exports.searchAuthor = (req, res) => {
+    var q = req.query.author
+    Author.findAll(
+        {
+            attributes: [
+                 'name',
+            ],
+            where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            include: [
+                {
+                    model: Book,
+                    attributes: ['id', 'name','image','star']
+                    
+                }
+            ]
+    }).then(books => {
+        res.send(books)
+    }).catch(err => res.status(500).send({message: err}))
 }

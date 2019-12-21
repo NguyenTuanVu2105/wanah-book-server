@@ -48,6 +48,12 @@ module.exports = function(app) {
 
 	app.get('/api/books/search', [authJwt.verifyToken],bookusercontroller.searchBook)
 
+	app.get('/api/books/searchbycategory', [authJwt.verifyToken],categorycontroller.searchCategory)
+
+	app.get('/api/books/searchbyauthor', [authJwt.verifyToken],authorcontroller.searchAuthor)
+
+	app.get('/api/auth/searchuser', [authJwt.verifyToken],usercontroller.searchUser)
+
 	app.get('/api/book/info', [authJwt.verifyToken],bookusercontroller.infoBook)
 
 	app.post('/api/admin/books/add',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.addBookAdmin);
