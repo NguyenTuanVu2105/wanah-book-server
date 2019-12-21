@@ -59,7 +59,7 @@ exports.deleteCategory = (req,res) =>{
         }
     })
 }
-exports.searchCategory = (req, res) => {
+exports.searchCategoryByName = (req, res) => {
     var q = req.query.category
     Category.findAll(
         {
@@ -67,6 +67,27 @@ exports.searchCategory = (req, res) => {
                  'name',
             ],
             where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            include: [
+                {
+                    model: Book,
+                    attributes: ['id', 'name','image','star']
+                    
+                }
+            ]
+    }).then(books => {
+        res.send(books)
+    }).catch(err => res.status(500).send({message: err}))
+}
+exports.searchCategoryById = (req, res) => {
+//    var q = req.query.category
+console.log(req.query.id)
+    Category.findAll(
+        {
+            attributes: [
+                 'name',
+            ],
+            where: {id: req.query.id},
+           
             include: [
                 {
                     model: Book,

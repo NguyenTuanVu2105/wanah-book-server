@@ -59,7 +59,7 @@ exports.deleteAuthor = (req,res) =>{
         }
     })
 }
-exports.searchAuthor = (req, res) => {
+exports.searchAuthorByName = (req, res) => {
     var q = req.query.author
     Author.findAll(
         {
@@ -67,6 +67,25 @@ exports.searchAuthor = (req, res) => {
                  'name',
             ],
             where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            include: [
+                {
+                    model: Book,
+                    attributes: ['id', 'name','image','star']
+                    
+                }
+            ]
+    }).then(books => {
+        res.send(books)
+    }).catch(err => res.status(500).send({message: err}))
+}
+exports.searchAuthorById = (req, res) => {
+   // var q = req.query.author
+    Author.findAll(
+        {
+            attributes: [
+                 'name',
+            ],
+            where: {id: req.query.id},
             include: [
                 {
                     model: Book,
