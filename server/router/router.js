@@ -104,6 +104,8 @@ module.exports = function(app) {
 	app.post('/api/request/accept', [authJwt.verifyToken], borrowcontroller.acceptRequest);
 
 	app.post('/api/request/deny', [authJwt.verifyToken], borrowcontroller.denyRequest);
+
+	app.get('/api/request', [authJwt.verifyToken], borrowcontroller.getRequestDetail);
 	// TODO: API message
 
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);

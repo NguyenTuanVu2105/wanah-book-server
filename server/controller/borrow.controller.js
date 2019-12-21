@@ -188,3 +188,56 @@ exports.getRequestsIncoming = (req, res) => {
     ).then(result => res.send(result))
     .catch(err => res.status(500).send({message: err}))
 }
+
+exports.getRequestDetail = (req, res) => {
+    var userId = req.userId
+    Request.findOne({
+        where: {
+            [Op.or]: [
+                {userId: userId},
+                db.sequelize.literal(`book_user.userId = ${userId}`)
+            ],
+            id: req.query.request_id
+        },
+        include: [{
+            model: BookUser, 
+            attributes: ['id', 'status'],
+            include: [
+                {
+                    model: Book, 
+                    attributes: ['id', 'name', 'image'],
+                    include: [{
+                        model: Author,
+                        attributes: ['name']
+                    }]
+                },
+                {
+                    model: User,
+                    attributes: ['id'],
+                    include: [{
+                        model: Profile,
+                        attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
+                    }]
+                }
+            ]
+        },
+        {
+            model: User,
+            attributes: ['id'],
+            include: [{
+                model: Profile,
+                attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
+            }]
+        } 
+    ] 
+    }
+    ).then(result => {
+        if (result){
+            res.send(result)
+        } else {
+            res.status(404).send({message: 'Not Found'})
+        }
+        
+    })
+    .catch(err => res.status(500).send({message: err}))
+}
