@@ -1,4 +1,7 @@
 const db = require('../config/db.config');
+const multer = require('multer');
+const fs = require('fs');
+
 const User = db.user;
 const Profile = db.profile;
 const Book = db.book;
@@ -26,6 +29,22 @@ exports.getCategory = (req, res) => {
     Category.findAll({
         limit: limit,
         offset: (page-1)*limit
+    }).then(data => {
+        res.status(200).send(data);
+    }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.category = (req, res) => {
+    Category.findAll({
+        where: {name: {[db.Sequelize.Op.like]: '%' + req.query.q + '%'}}
+    }).then(data => {
+        res.status(200).send(data);
+    }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.author = (req, res) => {
+    Author.findAll({
+        where: {name: {[db.Sequelize.Op.like]: '%' + req.query.q + '%'}}
     }).then(data => {
         res.status(200).send(data);
     }).catch(err => res.status(500).send({message: err}));
@@ -71,4 +90,16 @@ exports.totalInformationDetail = (req, res) => {
         console.log(value);
         res.status(200).send({totalUser: value[0], totalBook: value[1], totalReview: value[2]});
     }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.uploadBook = (req, res) => {
+    const processedFile = req.file || {}
+    let orgName = processedFile.originalname || ''
+    orgName = orgName.trim().replace(/ /g, "-")
+    const fullPathInServ = processedFile.path
+    const newFullPath = `${fullPathInServ}-${orgName}`
+    fs.renameSync(fullPathInServ, newFullPath);
+    const temp = newFullPath.split('\\')
+    const fileName = temp[temp.length-1]
+    res.send({fileName, test: req.body.test})    
 }
