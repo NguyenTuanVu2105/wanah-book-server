@@ -132,7 +132,12 @@ module.exports = function(app) {
 	app.get('/api/contacts', [authJwt.verifyToken], messagecontroller.getAllContact);
 	// TODO: API Admin
 
+	app.get('/api/search/category', /* [authJwt.verifyToken], */ admin.category);
+
+	app.get('/api/search/author', /* [authJwt.verifyToken], */ admin.author);
+
 	app.get('/api/user/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllUser);
+	app.post('/api/upload/book', [imageUploader.single('image')], admin.uploadBook);
 	app.get('/api/author/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.getAuthor);
 	app.get('/api/category/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.getCategory);
 	app.get('/api/book/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllBook);
