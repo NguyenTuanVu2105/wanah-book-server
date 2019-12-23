@@ -1,6 +1,7 @@
 const db = require('../config/db.config');
 const Category = db.category;
 const Book = db.book
+const Author = db.author
 //thêm thể loại//complete
 exports.addCategory = (req, res) => {
     const category = {};
@@ -60,7 +61,7 @@ exports.deleteCategory = (req,res) =>{
     })
 }
 exports.searchCategoryByName = (req, res) => {
-    var q = req.query.category
+    var q = req.query.q
     Category.findAll(
         {
             attributes: [
@@ -70,18 +71,32 @@ exports.searchCategoryByName = (req, res) => {
             include: [
                 {
                     model: Book,
-                    attributes: ['id', 'name','image','star']
-                    
+                    attributes: [
+                        'id', 'name', 'image', 'star',
+                        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+                    ],
+                    through: {
+                        attributes: []
+                    },
+                    include: [
+                    {
+                        model: Author,
+                        through: {
+                            attributes: []
+                        }
+                    }
+                ], 
+                order: [[db.sequelize.literal('ReviewCount'), 'DESC']]
                 }
             ]
-    }).then(books => {
-        res.send(books)
+    }).then(result => {
+        res.send(result.map(x => x.books))
     }).catch(err => res.status(500).send({message: err}))
 }
 exports.searchCategoryById = (req, res) => {
 //    var q = req.query.category
 console.log(req.query.id)
-    Category.findAll(
+    Category.findOne(
         {
             attributes: [
                  'name',
@@ -91,11 +106,24 @@ console.log(req.query.id)
             include: [
                 {
                     model: Book,
-                    attributes: ['id', 'name','image','star']
-                    
+                    through: {
+                        attributes: []
+                    },
+                    attributes: [
+                        'id', 'name', 'image', 'star',
+                        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+                    ],
+                    include: [
+                    {
+                        model: Author,
+                        through: {
+                            attributes: []
+                        }
+                    }
+                ], 
                 }
             ]
-    }).then(books => {
-        res.send(books)
+    }).then(result => {
+        res.send(result.books)
     }).catch(err => res.status(500).send({message: err}))
 }
