@@ -1,6 +1,6 @@
 const db = require('../config/db.config');
 const Author = db.author;
-
+const Book = db.book
 //thêm tác giả// complete
 exports.addAuthor = (req, res) => {
     const authors = {};
@@ -58,4 +58,68 @@ exports.deleteAuthor = (req,res) =>{
             res.status(404).json({message: err})
         }
     })
+}
+exports.searchAuthorByName = (req, res) => {
+    var q = req.query.q
+    Author.findAll(
+        {
+            attributes: [
+                 'name',
+            ],
+            where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            through: {
+                attributes: []
+            },
+            include: [
+                {
+                    model: Book,
+                    attributes: [
+                        'id', 'name', 'image', 'star',
+                        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+                    ],
+                    include: [
+                    {
+                        model: Author,
+                        through: {
+                            attributes: []
+                        }
+                    }
+                ],  
+                }
+            ]
+    }).then(result => {
+        res.send(result.map(x => x.books))
+    }).catch(err => res.status(500).send({message: err}))
+}
+exports.searchAuthorById = (req, res) => {
+   // var q = req.query.author
+    Author.findOne(
+        {
+            attributes: [
+                 'name',
+            ],
+            where: {id: req.query.id},
+            through: {
+                attributes: []
+            },
+            include: [
+                {
+                    model: Book,
+                    attributes: [
+                        'id', 'name', 'image', 'star',
+                        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+                    ],
+                    include: [
+                    {
+                        model: Author,
+                        through: {
+                            attributes: []
+                        }
+                    }
+                ],  
+                }
+            ]
+    }).then(result => {
+        res.send(result.books)
+    }).catch(err => res.status(500).send({message: err}))
 }

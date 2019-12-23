@@ -80,3 +80,18 @@ exports.testAdmin = (req, res) => {
 		res.send(user);
 	}).catch(err => console.log("error" + err));
 }
+exports.searchUser = (req, res) => {
+    var q = req.query.last_name
+    Profile.findAll(
+        {
+            where: {last_name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
+            // include: [
+            //     {
+            //         model: User,
+            //         attributes: ['id']
+            //     }
+            // ]
+    }).then(user => {
+        res.send(user)
+    }).catch(err => res.status(500).send({message: err}))
+}

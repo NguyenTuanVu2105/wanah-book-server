@@ -48,6 +48,16 @@ module.exports = function(app) {
 
 	app.get('/api/books/search', [authJwt.verifyToken],bookusercontroller.searchBook)
 
+	app.get('/api/books/search/bycategoryname', [authJwt.verifyToken],categorycontroller.searchCategoryByName)
+
+	app.get('/api/books/search/bycategoryid', [authJwt.verifyToken],categorycontroller.searchCategoryById)
+
+	app.get('/api/books/search/byauthorname', [authJwt.verifyToken],authorcontroller.searchAuthorByName)
+
+	app.get('/api/books/search/byauthorid', [authJwt.verifyToken],authorcontroller.searchAuthorById)
+
+	app.get('/api/auth/searchuser', [authJwt.verifyToken],usercontroller.searchUser)
+
 	app.get('/api/book/info', [authJwt.verifyToken],bookusercontroller.infoBook)
 
 	app.post('/api/admin/books/add',[authJwt.verifyToken, authJwt.isAdmin],bookadmincontroller.addBookAdmin);
@@ -110,7 +120,8 @@ module.exports = function(app) {
 
 	app.post('/api/message/add', [authJwt.verifyToken], messagecontroller.addMessage);
 	app.get('/api/message', [authJwt.verifyToken], messagecontroller.getMessage);
-
+	
+	app.get('/api/contacts', [authJwt.verifyToken], messagecontroller.getAllContact);
 	// TODO: API Admin
 
 	app.get('/api/user/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllUser);
