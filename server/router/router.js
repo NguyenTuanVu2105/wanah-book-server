@@ -114,6 +114,8 @@ module.exports = function(app) {
 	// TODO: API Admin
 
 	app.get('/api/user/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllUser);
+	app.get('/api/author/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.getAuthor);
+	app.get('/api/category/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.getCategory);
 	app.get('/api/book/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllBook);
 	app.get('/api/review/all', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.viewAllReview);
 	app.get('/api/total/detail', /* [authJwt.verifyToken, authJwt.isAdmin], */ admin.totalInformationDetail);

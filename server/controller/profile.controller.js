@@ -1,8 +1,6 @@
 const db = require('../config/db.config');
 const User = db.user;
 const Profile = db.profile;
-const Category = db.category;
-const Op = db.Sequelize.Op;
 const fs = require('fs')
 
 exports.editProfile = (req, res) => {

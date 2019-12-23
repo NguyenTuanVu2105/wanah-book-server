@@ -3,6 +3,8 @@ const User = db.user;
 const Profile = db.profile;
 const Book = db.book;
 const Review = db.review;
+const Category = db.category;
+const Author = db.author;
 
 exports.viewAllUser = (req, res) => {
     limit = parseInt(req.query.limit);
@@ -13,6 +15,28 @@ exports.viewAllUser = (req, res) => {
         include: [{
             model: Profile
         }]
+    }).then(data => {
+        res.status(200).send(data);
+    }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.getCategory = (req, res) => {
+    limit = parseInt(req.query.limit);
+    page = parseInt(req.query.page);
+    Category.findAll({
+        limit: limit,
+        offset: (page-1)*limit
+    }).then(data => {
+        res.status(200).send(data);
+    }).catch(err => res.status(500).send({message: err}));
+}
+
+exports.getAuthor = (req, res) => {
+    limit = parseInt(req.query.limit);
+    page = parseInt(req.query.page);
+    Author.findAll({
+        limit: limit,
+        offset: (page-1)*limit
     }).then(data => {
         res.status(200).send(data);
     }).catch(err => res.status(500).send({message: err}));
