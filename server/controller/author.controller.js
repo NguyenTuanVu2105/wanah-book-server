@@ -11,7 +11,7 @@ exports.addAuthor = (req, res) => {
         if(!author)
         {
             new Author(authors).save()
-            .then(author => res.send({success : true}))
+            .then(author => res.send({success : true, id: author.id}))
             .catch(err => res.status(404).send({message: err}));
         }
         else res.status(500).send({message: err})
