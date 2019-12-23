@@ -20,10 +20,12 @@ exports.addMessage = (req, res) => {
 exports.getMessage = (req, res) => {
     Message.findAll({
         where: {
-            [Op.or]: [{fromId: req.userId}, {toId: req.userId}],
-            [Op.or]: [{fromId: req.query.id}, {toId: req.query.id}]
+            [Op.or]: [
+                {[Op.and]: [{fromId: req.userId}, {toId: req.query.id}]},
+                {[Op.and]: [{fromId: req.query.id}, {toId: req.userId}]}
+            ]
         },
-        attributes: ['content', 'message_time'],
+        attributes: ['fromId', 'toId','content', 'message_time'],
     }).then(message => {
         res.status(200).send(message);
     }).catch(err => res.status(500).send({message: err}));
@@ -52,3 +54,4 @@ exports.getAllContact = (req, res) => {
         })
     }).catch(err => res.status(500).send({message: err}));
 }
+

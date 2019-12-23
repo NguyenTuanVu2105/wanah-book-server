@@ -16,6 +16,9 @@ exports.editProfile = (req, res) => {
         first_name: req.body.first_name,
         last_name:  req.body.last_name,
         description:  req.body.description,
+        address_detail: req.body.address_detail,
+        address_longitude: req.body.address_longitude,
+        address_latitude: req.body.address_latitude
     },{
     where: { id: user.profile.id }
     }).then( () =>res.status(200).send({success : true})

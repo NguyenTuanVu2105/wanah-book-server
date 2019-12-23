@@ -1,7 +1,7 @@
 const db = require('../config/db.config');
 const config = require('../config/config');
 const User = db.user;
-var avatar = "./asset/default_avatar.png";
+var avatar = "default_avatar.jpg";
 const Profile = db.profile;
 const Op = db.Sequelize.Op;
 const Sequelize = db.Sequelize;
@@ -96,7 +96,8 @@ exports.searchUser = (req, res) => {
 						 * COS(RADIANS(105.78498840332031 - address_longitude))
 						 + SIN(RADIANS(21.04166030883789))
 						 * SIN(RADIANS(address_latitude))))) FROM profiles WHERE users.id = profiles.id )`), 'distance'] ,
-				[db.sequelize.literal('(SELECT COUNT(*) FROM book_users WHERE book_users.userId = users.id)'), 'BookCount']
+				[db.sequelize.literal('(SELECT COUNT(*) FROM book_users WHERE book_users.userId = users.id)'), 'BookCount'],
+				[db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.userId = users.id)'), 'ReviewCount']
 			],
 			include: [
 				{

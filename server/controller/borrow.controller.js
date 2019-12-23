@@ -7,6 +7,7 @@ const User = db.user;
 const Profile = db.profile;
 const Author = db.author;
 const Op = db.Sequelize.Op;
+const Reviews = db.Reviews;
 // STATUS:  1: `Đợi Mượn`  
 //          2: `Đã Mượn`
 //          3: `Liên lạc`
@@ -36,10 +37,10 @@ exports.convertHavedBorrow = (req, res) => {
                 }, {
                     where: {
                         bookUserId: req.body.book_user_id,
-                        userId: req.userId           
+                        // userId: req.userId           
                     }
                 }).then(() => {
-                    res.status(200).send({success: true});
+                    res.status(200).send({success: true, request_date: dateNow, return_date: dateReturn});
                 }).catch(err => res.status(500).send({success: false, message: err}));
             }).catch(err => res.status(500).send({success: false, message: err}));
         }
@@ -138,7 +139,7 @@ exports.isReturnBook = (req, res) => {
                 }, {
                     where: {
                         bookUserId: req.body.book_user_id,
-                        userId: req.body.userId
+                        // userId: req.body.userId
                     }
                 }).then(() => {
                     res.status(200).send({success: true});
@@ -217,21 +218,48 @@ exports.getRequestDetail = (req, res) => {
                 },
                 {
                     model: User,
-                    attributes: ['id'],
+                    attributes: [
+                        'id'
+                    ],
                     include: [{
                         model: Profile,
                         attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
-                    }]
+                    }, 
+                    {
+                        model: Book,
+                        attributes: ['id'],
+                        through: {
+                            attributes: []
+                        }
+                    }, 
+                    {
+                        model: db.review,
+                        attributes: ['id']
+                    }
+                ]
                 }
             ]
         },
         {
             model: User,
-            attributes: ['id'],
+            attributes: ['id'
+        ],
             include: [{
                 model: Profile,
                 attributes: ['first_name', 'last_name', 'avatar', 'address_detail']
-            }]
+            },
+            {
+                model: Book,
+                attributes: ['id'],
+                through: {
+                    attributes: []
+                }
+            }, 
+            {
+                model: db.review,
+                attributes: ['id']
+            }
+        ]
         } 
     ] 
     }
