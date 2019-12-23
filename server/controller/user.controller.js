@@ -4,7 +4,7 @@ const User = db.user;
 var avatar = "./asset/default_avatar.png";
 const Profile = db.profile;
 const Op = db.Sequelize.Op;
-
+const Sequelize = db.Sequelize;
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 
@@ -81,16 +81,38 @@ exports.testAdmin = (req, res) => {
 	}).catch(err => console.log("error" + err));
 }
 exports.searchUser = (req, res) => {
-    var q = req.query.last_name
-    Profile.findAll(
+	var q = req.query.name
+	var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
+    User.findAll(
         {
-            where: {last_name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
-            // include: [
-            //     {
-            //         model: User,
-            //         attributes: ['id']
-            //     }
-            // ]
+			limit: limit,
+            offset: (page-1)*limit,
+			attributes: [
+				'id',
+				[db.sequelize.literal(`(SELECT 111111 *
+					DEGREES(ACOS(LEAST(1.0, COS(RADIANS(21.04166030883789))
+						 * COS(RADIANS(address_latitude))
+						 * COS(RADIANS(105.78498840332031 - address_longitude))
+						 + SIN(RADIANS(21.04166030883789))
+						 * SIN(RADIANS(address_latitude))))) FROM profiles WHERE users.id = profiles.id )`), 'distance'] ,
+				[db.sequelize.literal('(SELECT COUNT(*) FROM book_users WHERE book_users.userId = users.id)'), 'BookCount']
+			],
+			include: [
+				{
+					model: Profile,
+					where: Sequelize.where(
+						Sequelize.fn("CONCAT",
+						  Sequelize.col("first_name"),
+						  " ",
+						  Sequelize.col("last_name")
+						),
+						{
+						  [Op.like]: '%' + q + '%' 
+						}
+					  )
+                }
+			]
     }).then(user => {
         res.send(user)
     }).catch(err => res.status(500).send({message: err}))

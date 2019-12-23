@@ -107,8 +107,12 @@ exports.listBookOrderByReview = (req, res) => {
 
 exports.searchBook = (req, res) => {
     var q = req.query.q
+    var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
     Book.findAll(
         {
+            limit: limit,
+            offset: (page-1)*limit,
             attributes: [
                 'id', 'name', 'image', 'star',
             ],

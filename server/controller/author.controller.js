@@ -61,10 +61,14 @@ exports.deleteAuthor = (req,res) =>{
 }
 exports.searchAuthorByName = (req, res) => {
     var q = req.query.q
+    var limit = parseInt(req.query.limit)
+    var page = parseInt(req.query.page)
     Author.findAll(
         {
+            limit: limit,
+            offset: (page-1)*limit,
             attributes: [
-                 'name',
+                 'id','name',
             ],
             where: {name: {[db.Sequelize.Op.like]: '%' + q + '%'}},
             through: {
@@ -88,38 +92,32 @@ exports.searchAuthorByName = (req, res) => {
                 }
             ]
     }).then(result => {
-        res.send(result.map(x => x.books))
+        res.send(result)
     }).catch(err => res.status(500).send({message: err}))
 }
 exports.searchAuthorById = (req, res) => {
    // var q = req.query.author
-    Author.findOne(
+   var limit = parseInt(req.query.limit)
+   var page = parseInt(req.query.page)
+   Book.findAll({
+        limit: limit,
+        offset: (page-1)*limit,
+        attributes: [
+            'id', 'name', 'image', 'star',
+            [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
+        ],
+        include: [
         {
-            attributes: [
-                 'name',
-            ],
-            where: {id: req.query.id},
+            model: Author,
+            where: {
+                id: req.query.id
+            },
             through: {
                 attributes: []
-            },
-            include: [
-                {
-                    model: Book,
-                    attributes: [
-                        'id', 'name', 'image', 'star',
-                        [db.sequelize.literal('(SELECT COUNT(*) FROM reviews WHERE reviews.bookId = books.id)'), 'ReviewCount']
-                    ],
-                    include: [
-                    {
-                        model: Author,
-                        through: {
-                            attributes: []
-                        }
-                    }
-                ],  
-                }
-            ]
-    }).then(result => {
-        res.send(result.books)
+            }
+        }]
+   })
+    .then(result => {
+        res.send(result)
     }).catch(err => res.status(500).send({message: err}))
 }
