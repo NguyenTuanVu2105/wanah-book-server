@@ -22,7 +22,7 @@ exports.signup = (req, res) => {
 			password: bcrypt.hashSync(req.body.password, 8),
 			is_Admin: false,
 			profileId: profile.id
-		})		
+		})
 		.then(user =>res.status(200).send({success: true})).catch(err => console.log(err));
             })
 	.catch(err => {
